@@ -1,0 +1,39 @@
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Local agent/runtime state
+.agents/
+.codex/
+
+# Local/private compliance datasets
+data/*.json
+data/*.csv
+!data/*.example.json
+!data/*.example.csv
+!data/README.md
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Generated memo outputs
+memos/*.md
