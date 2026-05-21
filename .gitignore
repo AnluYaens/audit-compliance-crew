@@ -1,9 +1,13 @@
+# ============================================================
 # Environment and secrets
+# ============================================================
 .env
 .env.*
 !.env.example
 
-# Python
+# ============================================================
+# Python cache / test / coverage artifacts
+# ============================================================
 __pycache__/
 *.py[cod]
 *$py.class
@@ -13,27 +17,51 @@ __pycache__/
 .coverage
 htmlcov/
 
+# ============================================================
 # Virtual environments
+# ============================================================
 .venv/
 venv/
 env/
 
+# ============================================================
 # Local agent/runtime state
+# ============================================================
 .agents/
 .codex/
 
+# ============================================================
 # Local/private compliance datasets
+# Keep real/private compliance files out of Git.
+# Only commit sanitized example datasets.
+# ============================================================
 data/*.json
 data/*.csv
 !data/*.example.json
 !data/*.example.csv
 !data/README.md
 
+# ============================================================
+# Generated outputs
+# Keep folders with .gitkeep, ignore generated JSON reports.
+# ============================================================
+output/*
+!output/.gitkeep
+!output/evidence/
+output/evidence/*
+!output/evidence/.gitkeep
+
+# ============================================================
+# Generated memo/report outputs
+# Keep folder placeholder, ignore generated memos.
+# ============================================================
+memos/*
+!memos/.gitkeep
+
+# ============================================================
 # OS/editor noise
+# ============================================================
 .DS_Store
 Thumbs.db
 .vscode/
 .idea/
-
-# Generated memo outputs
-memos/*.md
