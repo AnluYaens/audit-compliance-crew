@@ -2,11 +2,13 @@ from __future__ import annotations
 
 from copy import deepcopy
 
+from schemas.audit_response import AuditResponseRequest
 from schemas.decisions import FinalDecision
 from schemas.evidence import AuditPlanningEvidenceBundle
 from schemas.materiality import MaterialityRequest
 from schemas.risk_assessment import RiskAssessmentRequest
 from services.acceptance_pipeline_service import run_acceptance_pipeline
+from services.audit_response_service import design_audit_response
 from services.materiality_service import calculate_materiality
 from services.risk_assessment_service import assess_audit_risks
 
@@ -40,6 +42,7 @@ def run_audit_planning_pipeline(
     - engagement risk routing
     - materiality calculation
     - structured audit risk assessment by area/assertion
+    - audit response planning
 
     The LLM is not involved in the decision.
     """
@@ -47,9 +50,17 @@ def run_audit_planning_pipeline(
     materiality_result = calculate_materiality(materiality_request)
     risk_assessment_result = assess_audit_risks(risk_assessment_request)
 
+    audit_response_result = design_audit_response(
+        AuditResponseRequest(
+            target_company=company_name,
+            assessed_risks=risk_assessment_result.assessed_risks,
+        )
+    )
+
     evidence_data = deepcopy(acceptance_bundle.evidence_data)
     evidence_data["materiality_result"] = materiality_result.model_dump(mode="json")
     evidence_data["risk_assessment_result"] = risk_assessment_result.model_dump(mode="json")
+    evidence_data["audit_response_result"] = audit_response_result.model_dump(mode="json")
 
     manual_review_reasons = list(acceptance_bundle.manual_review_reasons)
 
@@ -59,10 +70,14 @@ def run_audit_planning_pipeline(
     if risk_assessment_result.manual_review_reasons:
         manual_review_reasons.extend(risk_assessment_result.manual_review_reasons)
 
+    if audit_response_result.manual_review_reasons:
+        manual_review_reasons.extend(audit_response_result.manual_review_reasons)
+
     final_decision = combine_final_decisions(
         acceptance_bundle.final_decision,
         materiality_result.decision,
         risk_assessment_result.decision,
+        audit_response_result.decision,
     )
 
     if (

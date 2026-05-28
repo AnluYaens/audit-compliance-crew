@@ -1,3 +1,4 @@
+from schemas.audit_response import AuditProcedureType
 from schemas.decisions import FinalDecision
 from schemas.materiality import MaterialityRequest
 from schemas.risk_assessment import (
@@ -89,6 +90,8 @@ def test_clean_acceptance_clean_materiality_low_risk_continue():
     assert bundle.final_decision == FinalDecision.CONTINUE
     assert bundle.evidence_data["materiality_result"]["decision"] == FinalDecision.CONTINUE
     assert bundle.evidence_data["risk_assessment_result"]["decision"] == FinalDecision.CONTINUE
+    assert bundle.evidence_data["audit_response_result"]["decision"] == FinalDecision.CONTINUE
+    assert len(bundle.evidence_data["audit_response_result"]["procedures"]) >= 1
 
 
 def test_clean_acceptance_flagged_materiality_routes_manual_review():
@@ -100,28 +103,42 @@ def test_clean_acceptance_flagged_materiality_routes_manual_review():
 
     assert bundle.final_decision == FinalDecision.MANUAL_REVIEW
     assert bundle.evidence_data["materiality_result"]["decision"] == FinalDecision.MANUAL_REVIEW
+    assert "audit_response_result" in bundle.evidence_data
 
 
-def test_clean_acceptance_elevated_risk_routes_manual_review():
+def test_clean_acceptance_elevated_risk_routes_manual_review_with_enhanced_response():
     bundle = run_audit_planning_pipeline(
         company_name="GreenLeaf Organics",
         materiality_request=valid_materiality_request(),
         risk_assessment_request=elevated_risk_assessment_request(),
     )
 
+    procedures = bundle.evidence_data["audit_response_result"]["procedures"]
+
     assert bundle.final_decision == FinalDecision.MANUAL_REVIEW
     assert bundle.evidence_data["risk_assessment_result"]["decision"] == FinalDecision.MANUAL_REVIEW
+    assert bundle.evidence_data["audit_response_result"]["decision"] == FinalDecision.MANUAL_REVIEW
+    assert any(
+        procedure["procedure_type"] == AuditProcedureType.TEST_OF_CONTROLS
+        for procedure in procedures
+    )
 
 
-def test_fraud_risk_routes_manual_review():
+def test_fraud_risk_routes_manual_review_with_journal_entry_testing():
     bundle = run_audit_planning_pipeline(
         company_name="GreenLeaf Organics",
         materiality_request=valid_materiality_request(),
         risk_assessment_request=fraud_risk_assessment_request(),
     )
 
+    procedures = bundle.evidence_data["audit_response_result"]["procedures"]
+
     assert bundle.final_decision == FinalDecision.MANUAL_REVIEW
     assert any("FRAUD" in reason for reason in bundle.manual_review_reasons)
+    assert any(
+        procedure["procedure_type"] == AuditProcedureType.JOURNAL_ENTRY_TESTING
+        for procedure in procedures
+    )
 
 
 def test_rejected_acceptance_overrides_clean_planning_modules():
@@ -133,3 +150,4 @@ def test_rejected_acceptance_overrides_clean_planning_modules():
 
     assert bundle.final_decision == FinalDecision.REJECT
     assert bundle.evidence_data["independence_result"] == "CONFLICT_DETECTED"
+    assert "audit_response_result" in bundle.evidence_data
