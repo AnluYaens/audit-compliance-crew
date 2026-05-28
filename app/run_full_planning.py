@@ -1,4 +1,6 @@
 from __future__ import annotations
+from services.planning_memo_service import generate_planning_memo
+from storage.memo_store import save_planning_memo
 
 from schemas.materiality import MaterialityRequest
 from schemas.risk_assessment import (
@@ -50,12 +52,19 @@ def run_for_company(company_name: str) -> None:
 
     output_path = save_evidence_bundle(bundle)
 
+    memo_content = generate_planning_memo(bundle)
+    memo_path = save_planning_memo(
+    bundle=bundle,
+    memo_content=memo_content,
+)
+
     print("=" * 80)
     print(f"Company: {company_name}")
     print(f"Run ID: {bundle.run_id}")
     print(f"Final decision: {bundle.final_decision}")
     print(f"Manual review reasons: {bundle.manual_review_reasons}")
     print(f"Evidence saved to: {output_path}")
+    print(f"Memo saved to: {memo_path}")
     print("=" * 80)
 
 
