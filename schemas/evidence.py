@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 from pydantic import BaseModel, Field
 
 from schemas.decisions import ControlStatus, FinalDecision
+from schemas.source_registry import SourceRecord
 
 
 class ControlEvaluation(BaseModel):
@@ -35,6 +36,7 @@ class AuditPlanningEvidenceBundle(BaseModel):
     missing_evidence: list[str] = Field(default_factory=list)
     tool_errors: list[ToolError] = Field(default_factory=list)
     ai_outputs: list[AIOutputRecord] = Field(default_factory=list)
+    source_records: list[SourceRecord] = Field(default_factory=list)
 
     final_decision: FinalDecision = FinalDecision.MANUAL_REVIEW
     manual_review_reasons: list[str] = Field(default_factory=list)
