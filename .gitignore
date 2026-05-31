@@ -50,6 +50,7 @@ output/*
 !output/evidence/
 output/evidence/*
 !output/evidence/.gitkeep
+output/**/*.json
 
 # ============================================================
 # Generated memo/report outputs
