@@ -25,3 +25,8 @@ def save_evidence_bundle(
     )
 
     return output_path
+
+
+def load_evidence_bundle(path: str | Path) -> AuditPlanningEvidenceBundle:
+    payload = json.loads(Path(path).read_text(encoding="utf-8"))
+    return AuditPlanningEvidenceBundle.model_validate(payload)
