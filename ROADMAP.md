@@ -109,7 +109,19 @@ Expected files/modules:
 
 Why it matters: Source quality becomes auditable instead of hidden inside agent output.
 
-Constraints: Unknown, unverified, stale, or conflicting sources must trigger `MANUAL_REVIEW`.
+Completed scope:
+
+- Phase 4.1: source registry contracts and deterministic source scoring.
+- Phase 4.2: source registry integration with evidence bundles.
+- Phase 4.3: planning memo reporting from evidence bundle source support.
+- Phase 4.4: source registry documentation and operating rules.
+
+Constraints: Unknown, unverified, stale, low-confidence, missing, or conflicting
+required source support must trigger `MANUAL_REVIEW`. Source scoring cannot
+produce `REJECT`; final decisions still follow
+`REJECT > MANUAL_REVIEW > CONTINUE`. Agents may assist with source metadata, but
+validated Python services score and decide. Planning memo source support is
+reporting-only.
 
 ## Phase 5 - Financial Statement Processing Layer
 

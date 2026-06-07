@@ -17,6 +17,8 @@ Deterministic ingestion service
     ↓
 Independence and sanctions screening services
     ↓
+Source registry and deterministic source scoring
+    ↓
 Deterministic risk scoring service
     ↓
 Acceptance pipeline service
@@ -59,8 +61,14 @@ LLMs / CrewAI are allowed only for:
 | Independence conflict | REJECT |
 | Sanctions hit | REJECT |
 | Unknown or missing client data | MANUAL_REVIEW |
+| Missing, stale, contradictory, unverified, or weak required source support | MANUAL_REVIEW |
 | High engagement risk | MANUAL_REVIEW |
 | Clean screening + low/moderate risk | CONTINUE |
+
+Source scoring is a fail-closed support check. It may route weak evidence to
+`MANUAL_REVIEW`, but it does not produce `REJECT`; hard rejection remains limited
+to deterministic rejection criteria such as independence conflicts and sanctions
+hits.
 
 ---
 
@@ -84,11 +92,27 @@ Strict Pydantic data contracts for ingestion, screening, and risk outputs.
 
 These contracts prevent loose JSON from becoming the source of truth.
 
+### `schemas/source_registry.py`
+
+Structured source provenance contracts.
+
+`SourceRecord` captures source identity, type, publisher, retrieval date,
+freshness, confidence, relevance, notes, and contradiction flags. `SourceRegistry`
+groups those records for a run before deterministic scoring.
+
 ### `services/`
 
 Deterministic business logic layer.
 
 This folder contains the logic that will later map cleanly to Azure Function activity steps.
+
+### `services/source_scoring_service.py`
+
+Deterministic source scoring for authority, relevance, freshness, completeness,
+confidence, and contradictions.
+
+Agents may discover, extract, or summarize source metadata, but validated Python
+services score it and decide whether the supported workflow can continue.
 
 ### `services/acceptance_pipeline_service.py`
 
@@ -211,6 +235,7 @@ Completed:
 - Phase 2.2A: Strict contracts moved into `schemas/`
 - Phase 2.2B: Deterministic logic extracted into `services/`
 - Phase 2.2C: Deterministic acceptance pipeline implemented
+- Phase 4.1-4.3: Source registry, source scoring, evidence bundle source support, and memo reporting
 - High-risk engagements now route to manual review
 - Tests passing
 
