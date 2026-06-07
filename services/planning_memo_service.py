@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from schemas.evidence import AuditPlanningEvidenceBundle
+from schemas.source_registry import SourceRecord, SourceRegistryScoringResult
 
 
 def _format_list(items: list[str]) -> str:
@@ -15,6 +16,108 @@ def _format_money(value: object) -> str:
         return f"{value:,.2f}"
 
     return "Not available"
+
+
+def _format_yes_no(value: bool) -> str:
+    return "Yes" if value else "No"
+
+
+def _format_table_cell(value: object) -> str:
+    if value is None:
+        return "Not available"
+
+    return str(value).replace("|", "\\|").replace("\n", " ")
+
+
+def _source_identity(source: SourceRecord) -> str:
+    return source.url or source.identifier or "Not available"
+
+
+def _source_retrieval_date(source: SourceRecord) -> str:
+    return source.retrieval_date.date().isoformat()
+
+
+def _format_source_results_table(
+    scoring_result: SourceRegistryScoringResult,
+) -> str:
+    if not scoring_result.source_results:
+        return "- No source records available."
+
+    rows = [
+        "| # | Source | Type | Publisher | Retrieved | Status | Decision | Score |",
+        "|---|---|---|---|---|---|---|---|",
+    ]
+    for index, source_result in enumerate(scoring_result.source_results, start=1):
+        source = source_result.source
+        rows.append(
+            (
+                f"| {index} "
+                f"| {_format_table_cell(_source_identity(source))} "
+                f"| {_format_table_cell(source.source_type.value)} "
+                f"| {_format_table_cell(source.publisher)} "
+                f"| {_format_table_cell(_source_retrieval_date(source))} "
+                f"| {_format_table_cell(source_result.status)} "
+                f"| {_format_table_cell(source_result.decision.value)} "
+                f"| {source_result.total_score:.2f} |"
+            )
+        )
+
+    return "\n".join(rows)
+
+
+def _format_source_records_table(source_records: list[SourceRecord]) -> str:
+    if not source_records:
+        return "- No source records available."
+
+    rows = [
+        "| # | Source | Type | Publisher | Retrieved | Confidence | Relevance |",
+        "|---|---|---|---|---|---|---|",
+    ]
+    for index, source in enumerate(source_records, start=1):
+        rows.append(
+            (
+                f"| {index} "
+                f"| {_format_table_cell(_source_identity(source))} "
+                f"| {_format_table_cell(source.source_type.value)} "
+                f"| {_format_table_cell(source.publisher)} "
+                f"| {_format_table_cell(_source_retrieval_date(source))} "
+                f"| {source.confidence:.2f} "
+                f"| {source.relevance:.2f} |"
+            )
+        )
+
+    return "\n".join(rows)
+
+
+def _format_source_support_section(bundle: AuditPlanningEvidenceBundle) -> str:
+    scoring_result = bundle.source_registry_scoring_result
+
+    if scoring_result is None:
+        registry_decision = "Not available"
+        registry_status = "Not available"
+        manual_review_reasons = []
+        source_table = _format_source_records_table(bundle.source_records)
+    else:
+        registry_decision = scoring_result.decision.value
+        registry_status = scoring_result.status
+        manual_review_reasons = list(scoring_result.manual_review_reasons)
+        source_table = _format_source_results_table(scoring_result)
+
+    return f"""**Source support required:** {_format_yes_no(bundle.source_support_required)}
+
+**Source registry scoring decision:** {registry_decision}
+
+**Source quality/status:** {registry_status}
+
+**Decision impact:** Reported from the evidence bundle only; this memo does not create or override decisions.
+
+**Source registry manual review reasons:**
+
+{_format_list(manual_review_reasons)}
+
+**Source records:**
+
+{source_table}"""
 
 
 def generate_planning_memo(bundle: AuditPlanningEvidenceBundle) -> str:
@@ -102,7 +205,11 @@ The LLM or memo generator may assist with formatting and narrative presentation,
 
 {chr(10).join(procedure_lines) if procedure_lines else "- No audit response procedures available."}
 
-## 8. Conclusion
+## 8. Source Support
+
+{_format_source_support_section(bundle)}
+
+## 9. Conclusion
 
 The planning outcome for **{bundle.target_company}** is **{bundle.final_decision.value}**.
 
