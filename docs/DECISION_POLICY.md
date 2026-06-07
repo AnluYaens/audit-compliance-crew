@@ -37,7 +37,7 @@ Route to `MANUAL_REVIEW` when:
 - required evidence is missing
 - evidence is contradictory
 - extraction confidence is low
-- a source is unverified or weak
+- required source support is missing, stale, low-confidence, contradictory, unverified, or weak
 - client data is unknown or incomplete
 - engagement risk is high but not automatically rejecting
 - materiality inputs are unusual or unsupported
@@ -73,6 +73,26 @@ Examples:
 - Confirmed independence conflict -> `REJECT`
 - Confirmed sanctions hit -> `REJECT`
 
+## Source Scoring Policy
+
+Source scoring is deterministic support logic. `SourceRecord` captures provenance
+metadata, and `SourceRegistry` groups records for one run. The source scoring
+service evaluates authority, relevance, freshness, completeness, confidence, and
+contradictions after schema validation.
+
+Required source support must fail closed to `MANUAL_REVIEW` when source metadata
+is missing, stale, low-confidence, contradictory, unverified, incomplete, or
+below deterministic scoring thresholds. Optional source support may be reported
+for auditor visibility, but it does not override the evidence bundle or final
+decision.
+
+Source scoring cannot produce `REJECT`. Hard rejection must come from separate
+deterministic rejection criteria, and final decision priority remains:
+
+```text
+REJECT > MANUAL_REVIEW > CONTINUE
+```
+
 ## Missing Evidence Policy
 
 Missing evidence must be recorded in the evidence bundle and should create a manual review reason when it affects the conclusion.
@@ -84,6 +104,13 @@ The system must not fill gaps with agent assumptions.
 Contradictory evidence must route to `MANUAL_REVIEW` unless deterministic rules identify a hard rejection trigger.
 
 Contradictions should be preserved for auditor review rather than silently resolved by an agent.
+
+## Memo Reporting Policy
+
+Planning memo source support is reporting-only. Memo output may present source
+records, source scoring status, and source manual review reasons already present
+in the evidence bundle, but it must not create source support, change source
+scores, or override final decisions.
 
 ## Low-Confidence Extraction Policy
 

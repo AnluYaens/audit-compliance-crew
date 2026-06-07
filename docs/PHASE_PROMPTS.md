@@ -184,6 +184,39 @@ Suggested commit message:
 feat: connect source registry to evidence bundles
 ```
 
+## Phase 4.4 - Completed: Source Registry Documentation and Operating Rules
+
+```text
+Goal:
+Document the source registry and source scoring behavior added in Phases 4.1-4.3.
+
+Completed scope:
+- README, architecture, agent operating rules, decision policy, evals, phase prompts, and roadmap now describe SourceRecord, SourceRegistry, deterministic source scoring, source support requirements, and memo reporting.
+- Documentation confirms that Python services score and decide after schema validation.
+- Documentation confirms that the evidence bundle remains the source of truth.
+- Documentation confirms that source scoring may route weak support to MANUAL_REVIEW but cannot produce REJECT.
+- Documentation confirms that planning memo source support is reporting-only.
+
+Operating rules:
+- Python decides. Agents assist.
+- Agents may discover, extract, and summarize source metadata.
+- Validated Python services score source metadata and apply routing rules.
+- Required source support fails closed for missing, stale, low-confidence, contradictory, unverified, or weak metadata.
+- Optional source support may be reported for visibility but does not override decisions.
+- Final decision priority remains REJECT > MANUAL_REVIEW > CONTINUE.
+
+Validation commands:
+- python -m pytest tests
+- python -m compileall schemas services storage orchestration tests
+- git diff --check
+
+Future next step:
+Proceed to Phase 5.1: Financial Statement Schemas.
+
+Suggested commit message:
+docs: document source registry operating rules
+```
+
 ## Phase 5.1 - Financial Statement Schemas
 
 ```text

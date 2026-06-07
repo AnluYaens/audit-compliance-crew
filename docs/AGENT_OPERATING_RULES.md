@@ -16,7 +16,7 @@ Agents may:
 - discover candidate public or client-provided sources
 - extract structured facts from documents
 - summarize validated evidence
-- propose source quality observations
+- propose source metadata and source quality observations
 - draft memo language based on evidence bundles
 - answer auditor questions using cited evidence
 - flag missing support, contradictions, or low confidence
@@ -27,6 +27,7 @@ Agents may:
 Agents must not:
 
 - decide `CONTINUE`, `MANUAL_REVIEW`, or `REJECT`
+- approve source support or assign source scoring decisions
 - override deterministic services
 - bypass schemas or validation
 - write free-form content directly into the deterministic pipeline
@@ -46,6 +47,7 @@ Any agent output that affects the pipeline must use a Pydantic schema. The schem
 - missing evidence
 - contradictions
 - citations or provenance
+- source metadata fields such as identity, publisher, retrieval date, confidence, relevance, and contradiction flags
 - whether human review is required
 - any tool or model errors
 
@@ -83,6 +85,11 @@ Allowed output: structured observations for deterministic source scoring.
 
 Forbidden output: source status that bypasses `services/source_scoring_service.py`.
 
+Source scoring may route missing, stale, low-confidence, contradictory,
+unverified, or weak source metadata to `MANUAL_REVIEW`, but it cannot return
+`REJECT`. The evidence bundle remains the source of truth for scored source
+support.
+
 ### Deep Evidence Agent
 
 Extracts detailed evidence from selected sources.
@@ -113,7 +120,8 @@ Improves readability of deterministic memo drafts.
 
 Allowed output: edited narrative, clarity suggestions, and quality flags.
 
-Forbidden output: adding unsupported facts or changing conclusions.
+Forbidden output: adding unsupported facts, changing conclusions, or changing
+reported source support.
 
 ### Quality Review Agent
 
@@ -136,3 +144,7 @@ Agent work must route to `MANUAL_REVIEW` when evidence is:
 - outside the expected schema
 
 The evidence bundle remains the source of truth.
+
+Planning memo source sections are reporting-only. They may summarize source
+records and deterministic source scoring from the evidence bundle, but they do
+not create evidence, approve sources, or override final decisions.

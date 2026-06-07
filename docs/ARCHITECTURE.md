@@ -43,6 +43,8 @@ Company name and planning inputs
 -> screening service checks independence and sanctions facts
 -> risk scoring service evaluates engagement risk
 -> acceptance pipeline service produces an evidence bundle
+-> source registry records provenance
+-> source scoring service evaluates source support
 -> materiality service calculates planning materiality
 -> risk assessment service assesses account/assertion risks
 -> audit response service designs deterministic responses
@@ -74,6 +76,12 @@ The evidence bundle is the controlled record for the pipeline. It contains:
 
 Agents, memos, UI screens, and future Azure steps must read from validated evidence bundles rather than unsupported free-form text.
 
+Source support is also recorded in the evidence bundle. A bundle may carry
+`SourceRecord` entries, a `SourceRegistryScoringResult`, and whether source
+support was required for the workflow. The planning memo reports this section
+from the bundle only; it does not create evidence, change source scores, or
+override decisions.
+
 ## Future Agentic Architecture
 
 Future agents can sit around the deterministic core:
@@ -96,10 +104,30 @@ Research Scout Agent
 -> Pydantic validation
 -> source registry
 -> deterministic source scoring
--> approved, rejected, or manual-review source status
+-> continue or manual-review source status
 ```
 
-Source scoring should consider authority, relevance, freshness, completeness, contradictions, and confidence. If source quality is unclear, the downstream result must route to `MANUAL_REVIEW`.
+`SourceRecord` captures source identity, type, publisher, retrieval date,
+freshness threshold, confidence, relevance, notes, and contradiction flags.
+`SourceRegistry` groups records for one run and company.
+
+Source scoring is deterministic and considers authority, relevance, freshness,
+completeness, confidence, and contradictions. Missing identity, stale metadata,
+low confidence, low relevance, weak authority, contradiction flags, unverified
+metadata, or an empty registry fail closed to `MANUAL_REVIEW` when source support
+is required.
+
+Source scoring cannot return `REJECT`. Rejection remains reserved for hard-stop
+deterministic criteria, and combined pipeline decisions still follow:
+
+```text
+REJECT > MANUAL_REVIEW > CONTINUE
+```
+
+For source-support-required workflows, missing or weak source scoring prevents
+`CONTINUE`. For optional workflows, source metadata may be reported for auditor
+visibility without becoming a decision override. Agents may discover, extract,
+and summarize source metadata, but validated Python services score and decide.
 
 ## Statement Processing Flow
 

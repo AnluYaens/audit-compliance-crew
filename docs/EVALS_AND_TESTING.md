@@ -20,6 +20,7 @@ Current examples:
 - `tests/test_audit_response_service.py`
 - `tests/test_deterministic_services.py`
 - `tests/test_phase2_control_evaluation.py`
+- `tests/test_source_scoring_service.py`
 
 Unit tests should assert:
 
@@ -27,6 +28,7 @@ Unit tests should assert:
 - manual review reasons
 - rejection triggers
 - missing evidence handling
+- source scoring fail-closed behavior
 - schema validation errors
 - deterministic output shape
 
@@ -37,6 +39,7 @@ Integration tests should cover service composition and full pipeline behavior.
 Current examples:
 
 - `tests/test_audit_planning_pipeline_service.py`
+- `tests/test_evidence_bundle_sources.py`
 - `tests/test_full_planning_runner_storage.py`
 - `tests/test_memo_store.py`
 - `tests/test_planning_memo_service.py`
@@ -69,7 +72,7 @@ python -m pytest tests
 When changing imports, module boundaries, or broad Python structure, also run:
 
 ```bash
-python -m py_compile $(find . -name "*.py" -not -path "./.venv/*")
+python -m compileall schemas services storage orchestration tests
 ```
 
 ## Fixtures Strategy
@@ -81,6 +84,7 @@ Future fixtures should live under `tests/fixtures/` and represent:
 - sanctions hits
 - high-risk engagements
 - missing company data
+- missing or weak required source support
 - contradictory evidence
 - low-confidence extraction
 - invalid agent outputs
@@ -96,6 +100,7 @@ Golden outputs should capture stable expected artifacts, such as:
 - planning memo drafts
 - normalized financial statement records
 - source scoring outputs
+- evidence bundle source records
 - agent structured outputs
 
 Golden files should avoid brittle timestamps and run IDs unless those values are explicitly normalized.
@@ -125,7 +130,9 @@ Future agent guardrail tests should assert that:
 - low confidence causes `MANUAL_REVIEW`
 - missing citations cause `MANUAL_REVIEW`
 - agents cannot assign final decisions
+- agents cannot approve source support or produce `REJECT` through source scoring
 - memo enhancement cannot add unsupported facts
+- memo source sections report only evidence bundle source support
 - auditor assistant answers cite evidence bundle fields
 
 ## Current Smoke Cases
