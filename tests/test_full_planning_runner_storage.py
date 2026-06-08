@@ -1,5 +1,7 @@
+import json
 from pathlib import Path
 
+from app.run_full_planning import run_for_company
 from schemas.materiality import MaterialityRequest
 from schemas.risk_assessment import (
     AuditAssertion,
@@ -57,3 +59,37 @@ def test_full_planning_bundle_can_be_saved(tmp_path: Path):
     assert "materiality_result" in saved_content
     assert "risk_assessment_result" in saved_content
     assert "audit_response_result" in saved_content
+
+
+def test_full_planning_runner_persists_source_registry_smoke_output(tmp_path: Path):
+    result = run_for_company(
+        "GreenLeaf Organics",
+        evidence_output_dir=str(tmp_path / "evidence"),
+        source_registry_output_dir=str(tmp_path / "source_registry"),
+        memo_output_dir=str(tmp_path / "memos"),
+    )
+
+    assert result.evidence_path.exists()
+    assert result.source_registry_path.exists()
+    assert result.memo_path.exists()
+
+    evidence_payload = json.loads(result.evidence_path.read_text(encoding="utf-8"))
+    assert evidence_payload["source_support_required"] is True
+    assert len(evidence_payload["source_records"]) == 2
+    assert evidence_payload["source_records"][0]["publisher"] == "Sample Audit Archive"
+    assert evidence_payload["source_registry_scoring_result"]["decision"] == "CONTINUE"
+    assert (
+        evidence_payload["evidence_data"]["source_registry_scoring_result"]["decision"]
+        == "CONTINUE"
+    )
+
+    source_registry_payload = json.loads(
+        result.source_registry_path.read_text(encoding="utf-8")
+    )
+    assert source_registry_payload["target_company"] == "GreenLeaf Organics"
+    assert len(source_registry_payload["records"]) == 2
+
+    memo_content = result.memo_path.read_text(encoding="utf-8")
+    assert "## 8. Source Support" in memo_content
+    assert "**Source registry scoring decision:** CONTINUE" in memo_content
+    assert "Sample Audit Archive" in memo_content
