@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import date
 from decimal import Decimal
 from enum import Enum
-from typing import Annotated, ClassVar
+from typing import Annotated, ClassVar, Literal
 
 from pydantic import Field, StringConstraints, computed_field, model_validator
 
@@ -109,6 +109,49 @@ class NormalizedLineItem(StrictContractModel):
                 raise ValueError("Missing line items cannot include an amount.")
             if self.missing_reason is None:
                 raise ValueError("Missing line items require a missing_reason.")
+
+        return self
+
+
+class FinancialLineItemExtraction(StrictContractModel):
+    source_label: NonEmptyStr = Field(
+        description="Original line item caption extracted from the financial statements.",
+    )
+    amount: Decimal | None = Field(
+        default=None,
+        description="Extracted monetary amount before deterministic normalization.",
+    )
+    extraction_status: LineItemExtractionStatus = Field(
+        default=LineItemExtractionStatus.PRESENT,
+        description="Whether the line item was extracted, estimated, missing, or not applicable.",
+    )
+    source_reference: SourceReference | None = Field(
+        default=None,
+        description="Source location for this extracted line item.",
+    )
+    confidence: float = Field(
+        ge=0.0,
+        le=1.0,
+        description="Line-item extraction confidence from zero to one.",
+    )
+    missing_reason: NonEmptyStr | None = Field(
+        default=None,
+        description="Reason a line item could not be extracted.",
+    )
+
+    @model_validator(mode="after")
+    def validate_amount_for_status(self) -> "FinancialLineItemExtraction":
+        if self.extraction_status in {
+            LineItemExtractionStatus.PRESENT,
+            LineItemExtractionStatus.ESTIMATED,
+        } and self.amount is None:
+            raise ValueError("Present or estimated extracted line items require an amount.")
+
+        if self.extraction_status == LineItemExtractionStatus.MISSING:
+            if self.amount is not None:
+                raise ValueError("Missing extracted line items cannot include an amount.")
+            if self.missing_reason is None:
+                raise ValueError("Missing extracted line items require a missing_reason.")
 
         return self
 
@@ -365,3 +408,46 @@ class FinancialStatementSet(StrictContractModel):
     @property
     def manual_review_required(self) -> bool:
         return bool(self.manual_review_reasons)
+
+
+class FinancialStatementNormalizationRequest(StrictContractModel):
+    statement_type: Literal[
+        StatementType.BALANCE_SHEET,
+        StatementType.INCOME_STATEMENT,
+        StatementType.CASH_FLOW_STATEMENT,
+    ] = Field(description="Financial statement type to normalize.")
+    period: FinancialStatementPeriod = Field(description="Validated reporting period.")
+    currency: CurrencyCode = Field(description="ISO 4217 statement currency code.")
+    source_reference: SourceReference = Field(
+        description="Source document reference for the statement as a whole.",
+    )
+    confidence: float = Field(
+        ge=0.0,
+        le=1.0,
+        description="Overall statement extraction confidence from zero to one.",
+    )
+    missing_fields: list[NonEmptyStr] = Field(
+        default_factory=list,
+        description="Statement-level fields that extraction could not validate.",
+    )
+    line_items: list[FinancialLineItemExtraction] = Field(
+        min_length=1,
+        description="Validated extracted line items before deterministic normalization.",
+    )
+
+
+class FinancialStatementNormalizationResult(StrictContractModel):
+    tool: Literal["Normalize Financial Statement"] = "Normalize Financial Statement"
+    status: Literal["SUCCESS", "REVIEW_REQUIRED"]
+    statement: BalanceSheetStatement | IncomeStatement | CashFlowStatement
+    manual_review_flags: list[NonEmptyStr] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def validate_status_matches_flags(self) -> "FinancialStatementNormalizationResult":
+        if self.manual_review_flags and self.status != "REVIEW_REQUIRED":
+            raise ValueError("Normalization results with review flags must be REVIEW_REQUIRED.")
+
+        if not self.manual_review_flags and self.status != "SUCCESS":
+            raise ValueError("Normalization results without review flags should be SUCCESS.")
+
+        return self
