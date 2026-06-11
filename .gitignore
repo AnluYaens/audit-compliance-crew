@@ -59,6 +59,10 @@ output/**/*.json
 memos/*
 !memos/.gitkeep
 
+# Local generated-output backup folders
+output_old/
+memos_old/
+
 # ============================================================
 # OS/editor noise
 # ============================================================

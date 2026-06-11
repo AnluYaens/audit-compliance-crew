@@ -1,4 +1,6 @@
 import json
+import subprocess
+import sys
 from pathlib import Path
 
 from app.run_full_planning import run_for_company
@@ -11,6 +13,28 @@ from schemas.risk_assessment import (
 )
 from services.audit_planning_pipeline_service import run_audit_planning_pipeline
 from storage.evidence_store import save_evidence_bundle
+
+
+def test_full_planning_runner_imports_when_executed_as_script_path():
+    project_root = Path(__file__).resolve().parents[1]
+
+    completed = subprocess.run(
+        [
+            sys.executable,
+            "-c",
+            (
+                "import runpy; "
+                "runpy.run_path('run_full_planning.py', "
+                "run_name='direct_script_import_smoke')"
+            ),
+        ],
+        cwd=project_root / "app",
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    assert completed.returncode == 0, completed.stderr
 
 
 def test_full_planning_bundle_can_be_saved(tmp_path: Path):
