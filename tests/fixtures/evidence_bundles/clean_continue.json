@@ -1,0 +1,77 @@
+{
+  "run_id": "fixture-clean-continue",
+  "manual_version": "BDO DE Audit Manual 2025.01",
+  "target_company": "Fixture Clean GmbH",
+  "engagement_type": "Financial Statement Audit",
+  "evidence_data": {
+    "acceptance_decision": "CONTINUE",
+    "materiality_result": {
+      "decision": "CONTINUE"
+    },
+    "risk_assessment_result": {
+      "decision": "CONTINUE"
+    },
+    "audit_response_result": {
+      "decision": "CONTINUE"
+    }
+  },
+  "controls_evaluated": [],
+  "missing_evidence": [],
+  "tool_errors": [],
+  "ai_outputs": [],
+  "source_records": [
+    {
+      "url": "https://example.test/fixture-clean-registry",
+      "identifier": null,
+      "source_type": "REGULATORY",
+      "publisher": "Fixture Regulator",
+      "retrieval_date": "2025-01-15T00:00:00Z",
+      "confidence": 0.96,
+      "freshness_days": 5000,
+      "relevance": 0.94,
+      "notes": "Synthetic registry source for fixture validation.",
+      "contradiction_flags": []
+    }
+  ],
+  "source_registry_scoring_result": {
+    "tool": "Score Source Registry",
+    "status": "SUCCESS",
+    "decision": "CONTINUE",
+    "run_id": "fixture-clean-continue",
+    "target_company": "Fixture Clean GmbH",
+    "source_results": [
+      {
+        "tool": "Score Source Reliability",
+        "status": "SUCCESS",
+        "decision": "CONTINUE",
+        "source": {
+          "url": "https://example.test/fixture-clean-registry",
+          "identifier": null,
+          "source_type": "REGULATORY",
+          "publisher": "Fixture Regulator",
+          "retrieval_date": "2025-01-15T00:00:00Z",
+          "confidence": 0.96,
+          "freshness_days": 5000,
+          "relevance": 0.94,
+          "notes": "Synthetic registry source for fixture validation.",
+          "contradiction_flags": []
+        },
+        "scores": {
+          "authority_score": 1.0,
+          "relevance_score": 0.94,
+          "freshness_score": 1.0,
+          "completeness_score": 1.0,
+          "confidence_score": 0.96,
+          "contradiction_flag": false
+        },
+        "total_score": 0.98,
+        "manual_review_reasons": []
+      }
+    ],
+    "manual_review_reasons": []
+  },
+  "source_support_required": true,
+  "final_decision": "CONTINUE",
+  "manual_review_reasons": [],
+  "created_at": "2025-01-15T00:00:00Z"
+}

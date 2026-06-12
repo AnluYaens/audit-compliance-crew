@@ -1,0 +1,44 @@
+{
+  "metadata": {
+    "schema_version": "1.0",
+    "dataset_name": "phase_9_1_initial_fixture_index",
+    "description": "Stable synthetic fixture index for future eval and regression workflows.",
+    "normalized_fields": [
+      "created_at",
+      "generated_at",
+      "run_id"
+    ]
+  },
+  "cases": [
+    {
+      "case_id": "clean_continue",
+      "fixture_path": "tests/fixtures/evidence_bundles/clean_continue.json",
+      "expected_route": "CONTINUE"
+    },
+    {
+      "case_id": "reject_independence_conflict",
+      "fixture_path": "tests/fixtures/evidence_bundles/reject_independence_conflict.json",
+      "expected_route": "REJECT"
+    },
+    {
+      "case_id": "manual_review_missing_source_support",
+      "fixture_path": "tests/fixtures/evidence_bundles/manual_review_missing_source_support.json",
+      "expected_route": "MANUAL_REVIEW"
+    },
+    {
+      "case_id": "contradiction_research_agent_output",
+      "fixture_path": "tests/fixtures/agent_outputs/contradiction_research_agent_output.json",
+      "expected_route": "MANUAL_REVIEW"
+    },
+    {
+      "case_id": "missing_evidence_research_agent_output",
+      "fixture_path": "tests/fixtures/agent_outputs/missing_evidence_research_agent_output.json",
+      "expected_route": "MANUAL_REVIEW"
+    },
+    {
+      "case_id": "low_confidence_research_agent_output",
+      "fixture_path": "tests/fixtures/agent_outputs/low_confidence_research_agent_output.json",
+      "expected_route": "MANUAL_REVIEW"
+    }
+  ]
+}

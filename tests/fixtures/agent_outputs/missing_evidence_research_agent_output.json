@@ -1,0 +1,64 @@
+{
+  "schema_version": "1.0",
+  "task_type": "EVIDENCE_EXTRACTION",
+  "run_id": "fixture-agent-missing-evidence",
+  "target_company": "Fixture Missing Evidence GmbH",
+  "research_question": "Find synthetic sanctions-screening support.",
+  "generated_at": "2025-01-15T00:00:00Z",
+  "candidate_sources": [
+    {
+      "source_id": "src-missing-screening",
+      "title": "Fixture Sanctions Screening Placeholder",
+      "source_type": "THIRD_PARTY_DATABASE",
+      "url": null,
+      "identifier": "fixture-screening-placeholder",
+      "publisher": "Fixture Screening System",
+      "retrieval_date": "2025-01-15T00:00:00Z",
+      "confidence": 0.88,
+      "relevance": 0.82,
+      "provenance_notes": "Synthetic placeholder source with missing evidence.",
+      "missing_evidence": [
+        "Screening result was not available."
+      ],
+      "contradictions": [],
+      "citations": [
+        {
+          "source_id": "src-missing-screening",
+          "citation_type": "INTERNAL_RECORD",
+          "locator": "fixture-screening-placeholder",
+          "excerpt": "Screening record exists but result is absent.",
+          "retrieved_at": "2025-01-15T00:00:00Z"
+        }
+      ]
+    }
+  ],
+  "extracted_evidence": [
+    {
+      "evidence_id": "ev-missing-sanctions-result",
+      "source_id": "src-missing-screening",
+      "claim": "Synthetic sanctions-screening result could not be confirmed.",
+      "extracted_value": null,
+      "status": "MISSING",
+      "confidence": 0.85,
+      "citations": [
+        {
+          "source_id": "src-missing-screening",
+          "citation_type": "INTERNAL_RECORD",
+          "locator": "fixture-screening-placeholder#result",
+          "excerpt": "No screening result value was present.",
+          "retrieved_at": "2025-01-15T00:00:00Z"
+        }
+      ],
+      "missing_evidence": [
+        "Screening result value is missing."
+      ],
+      "contradictions": [],
+      "notes": "Synthetic missing-evidence case."
+    }
+  ],
+  "missing_evidence": [
+    "Sanctions-screening result value is missing."
+  ],
+  "contradictions": [],
+  "tool_errors": []
+}
