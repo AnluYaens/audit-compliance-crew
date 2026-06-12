@@ -1,0 +1,231 @@
+{
+  "target_company": "Fixture Clean GmbH",
+  "balance_sheet": {
+    "statement_type": "BALANCE_SHEET",
+    "period": {
+      "end_date": "2025-12-31",
+      "start_date": "2025-01-01",
+      "fiscal_year": 2025
+    },
+    "currency": "EUR",
+    "source_reference": {
+      "document_id": "fixture-fs-clean-2025",
+      "page_number": 3,
+      "section": "Balance sheet",
+      "locator": null
+    },
+    "confidence": 0.95,
+    "missing_fields": [],
+    "line_items": [
+      {
+        "normalized_name": "cash_and_cash_equivalents",
+        "source_label": "Cash and cash equivalents",
+        "amount": "100000",
+        "extraction_status": "PRESENT",
+        "source_reference": null,
+        "confidence": 0.95,
+        "missing_reason": null
+      },
+      {
+        "normalized_name": "total_assets",
+        "source_label": "Total assets",
+        "amount": "1000000",
+        "extraction_status": "PRESENT",
+        "source_reference": null,
+        "confidence": 0.95,
+        "missing_reason": null
+      },
+      {
+        "normalized_name": "total_liabilities",
+        "source_label": "Total liabilities",
+        "amount": "400000",
+        "extraction_status": "PRESENT",
+        "source_reference": null,
+        "confidence": 0.95,
+        "missing_reason": null
+      },
+      {
+        "normalized_name": "total_equity",
+        "source_label": "Total equity",
+        "amount": "600000",
+        "extraction_status": "PRESENT",
+        "source_reference": null,
+        "confidence": 0.95,
+        "missing_reason": null
+      }
+    ]
+  },
+  "income_statement": {
+    "statement_type": "INCOME_STATEMENT",
+    "period": {
+      "end_date": "2025-12-31",
+      "start_date": "2025-01-01",
+      "fiscal_year": 2025
+    },
+    "currency": "EUR",
+    "source_reference": {
+      "document_id": "fixture-fs-clean-2025",
+      "page_number": 4,
+      "section": "Income statement",
+      "locator": null
+    },
+    "confidence": 0.95,
+    "missing_fields": [],
+    "line_items": [
+      {
+        "normalized_name": "revenue",
+        "source_label": "Revenue",
+        "amount": "2500000",
+        "extraction_status": "PRESENT",
+        "source_reference": null,
+        "confidence": 0.95,
+        "missing_reason": null
+      },
+      {
+        "normalized_name": "expenses",
+        "source_label": "Expenses",
+        "amount": "2200000",
+        "extraction_status": "PRESENT",
+        "source_reference": null,
+        "confidence": 0.95,
+        "missing_reason": null
+      },
+      {
+        "normalized_name": "profit_before_tax",
+        "source_label": "Profit before tax",
+        "amount": "300000",
+        "extraction_status": "PRESENT",
+        "source_reference": null,
+        "confidence": 0.95,
+        "missing_reason": null
+      },
+      {
+        "normalized_name": "net_income",
+        "source_label": "Net income",
+        "amount": "210000",
+        "extraction_status": "PRESENT",
+        "source_reference": null,
+        "confidence": 0.95,
+        "missing_reason": null
+      }
+    ]
+  },
+  "cash_flow_statement": {
+    "statement_type": "CASH_FLOW_STATEMENT",
+    "period": {
+      "end_date": "2025-12-31",
+      "start_date": "2025-01-01",
+      "fiscal_year": 2025
+    },
+    "currency": "EUR",
+    "source_reference": {
+      "document_id": "fixture-fs-clean-2025",
+      "page_number": 5,
+      "section": "Cash flow statement",
+      "locator": null
+    },
+    "confidence": 0.95,
+    "missing_fields": [],
+    "line_items": [
+      {
+        "normalized_name": "net_cash_from_operating_activities",
+        "source_label": "Net cash from operating activities",
+        "amount": "325000",
+        "extraction_status": "PRESENT",
+        "source_reference": null,
+        "confidence": 0.95,
+        "missing_reason": null
+      },
+      {
+        "normalized_name": "net_cash_from_investing_activities",
+        "source_label": "Net cash from investing activities",
+        "amount": "-125000",
+        "extraction_status": "PRESENT",
+        "source_reference": null,
+        "confidence": 0.95,
+        "missing_reason": null
+      },
+      {
+        "normalized_name": "net_cash_from_financing_activities",
+        "source_label": "Net cash from financing activities",
+        "amount": "-50000",
+        "extraction_status": "PRESENT",
+        "source_reference": null,
+        "confidence": 0.95,
+        "missing_reason": null
+      },
+      {
+        "normalized_name": "cash_and_cash_equivalents_end_of_period",
+        "source_label": "Cash and cash equivalents at end of period",
+        "amount": "100000",
+        "extraction_status": "PRESENT",
+        "source_reference": null,
+        "confidence": 0.95,
+        "missing_reason": null
+      }
+    ]
+  },
+  "notes": {
+    "statement_type": "NOTES",
+    "period": {
+      "end_date": "2025-12-31",
+      "start_date": "2025-01-01",
+      "fiscal_year": 2025
+    },
+    "currency": "EUR",
+    "source_reference": {
+      "document_id": "fixture-fs-clean-2025",
+      "page_number": 8,
+      "section": "Notes",
+      "locator": null
+    },
+    "confidence": 0.95,
+    "missing_fields": [],
+    "notes": [
+      {
+        "normalized_name": "accounting_policies",
+        "source_label": "Accounting policies",
+        "note_number": "1",
+        "extraction_status": "PRESENT",
+        "source_reference": null,
+        "confidence": 0.95,
+        "summary": "Synthetic accounting policies disclosure was extracted.",
+        "related_line_items": [],
+        "missing_reason": null
+      },
+      {
+        "normalized_name": "going_concern",
+        "source_label": "Going concern",
+        "note_number": "2",
+        "extraction_status": "PRESENT",
+        "source_reference": null,
+        "confidence": 0.95,
+        "summary": "Synthetic going-concern disclosure was extracted.",
+        "related_line_items": [],
+        "missing_reason": null
+      },
+      {
+        "normalized_name": "related_party_transactions",
+        "source_label": "Related party transactions",
+        "note_number": "3",
+        "extraction_status": "PRESENT",
+        "source_reference": null,
+        "confidence": 0.95,
+        "summary": "Synthetic related-party disclosure was extracted.",
+        "related_line_items": [],
+        "missing_reason": null
+      },
+      {
+        "normalized_name": "commitments_and_contingencies",
+        "source_label": "Commitments and contingencies",
+        "note_number": "4",
+        "extraction_status": "PRESENT",
+        "source_reference": null,
+        "confidence": 0.95,
+        "summary": "Synthetic commitments disclosure was extracted.",
+        "related_line_items": [],
+        "missing_reason": null
+      }
+    ]
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "run_id": "fixture-reject-independence",
+  "manual_version": "BDO DE Audit Manual 2025.01",
+  "target_company": "Fixture Conflict AG",
+  "engagement_type": "Financial Statement Audit",
+  "evidence_data": {
+    "acceptance_decision": "REJECT",
+    "reject_trigger": "Independence conflict identified in synthetic CRM record."
+  },
+  "controls_evaluated": [],
+  "missing_evidence": [],
+  "tool_errors": [],
+  "ai_outputs": [],
+  "source_records": [],
+  "source_registry_scoring_result": null,
+  "source_support_required": false,
+  "final_decision": "REJECT",
+  "manual_review_reasons": [
+    "Synthetic independence conflict requires rejection."
+  ],
+  "created_at": "2025-01-15T00:00:00Z"
+}

@@ -1,0 +1,58 @@
+{
+  "schema_version": "1.0",
+  "task_type": "EVIDENCE_EXTRACTION",
+  "run_id": "fixture-agent-low-confidence",
+  "target_company": "Fixture Low Confidence GmbH",
+  "research_question": "Extract synthetic beneficial-owner information.",
+  "generated_at": "2025-01-15T00:00:00Z",
+  "candidate_sources": [
+    {
+      "source_id": "src-low-confidence-owner",
+      "title": "Fixture Ownership Extract",
+      "source_type": "COMPANY_FILING",
+      "url": "https://example.test/fixture-low-confidence-owner",
+      "identifier": null,
+      "publisher": "Fixture Filing System",
+      "retrieval_date": "2025-01-15T00:00:00Z",
+      "confidence": 0.70,
+      "relevance": 0.80,
+      "provenance_notes": "Synthetic low-confidence source case.",
+      "missing_evidence": [],
+      "contradictions": [],
+      "citations": [
+        {
+          "source_id": "src-low-confidence-owner",
+          "citation_type": "URL",
+          "locator": "https://example.test/fixture-low-confidence-owner",
+          "excerpt": "Ownership text was partially readable.",
+          "retrieved_at": "2025-01-15T00:00:00Z"
+        }
+      ]
+    }
+  ],
+  "extracted_evidence": [
+    {
+      "evidence_id": "ev-low-confidence-owner",
+      "source_id": "src-low-confidence-owner",
+      "claim": "Synthetic beneficial-owner name was extracted with low confidence.",
+      "extracted_value": "Fixture Holdings",
+      "status": "LOW_CONFIDENCE",
+      "confidence": 0.62,
+      "citations": [
+        {
+          "source_id": "src-low-confidence-owner",
+          "citation_type": "URL",
+          "locator": "https://example.test/fixture-low-confidence-owner#owners",
+          "excerpt": "Owner text partially legible.",
+          "retrieved_at": "2025-01-15T00:00:00Z"
+        }
+      ],
+      "missing_evidence": [],
+      "contradictions": [],
+      "notes": "Synthetic low-confidence extraction case."
+    }
+  ],
+  "missing_evidence": [],
+  "contradictions": [],
+  "tool_errors": []
+}

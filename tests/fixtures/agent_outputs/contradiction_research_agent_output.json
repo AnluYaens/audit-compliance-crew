@@ -1,0 +1,64 @@
+{
+  "schema_version": "1.0",
+  "task_type": "EVIDENCE_EXTRACTION",
+  "run_id": "fixture-agent-contradiction",
+  "target_company": "Fixture Contradiction GmbH",
+  "research_question": "Compare synthetic registry and filing status.",
+  "generated_at": "2025-01-15T00:00:00Z",
+  "candidate_sources": [
+    {
+      "source_id": "src-contradiction-registry",
+      "title": "Fixture Contradiction Registry Extract",
+      "source_type": "GOVERNMENT_REGISTRY",
+      "url": "https://example.test/fixture-contradiction-registry",
+      "identifier": null,
+      "publisher": "Fixture Registry",
+      "retrieval_date": "2025-01-15T00:00:00Z",
+      "confidence": 0.93,
+      "relevance": 0.92,
+      "provenance_notes": "Synthetic source for contradiction guardrails.",
+      "missing_evidence": [],
+      "contradictions": [
+        "Registry status conflicts with synthetic filing status."
+      ],
+      "citations": [
+        {
+          "source_id": "src-contradiction-registry",
+          "citation_type": "URL",
+          "locator": "https://example.test/fixture-contradiction-registry",
+          "excerpt": "Registry status active; filing status inactive.",
+          "retrieved_at": "2025-01-15T00:00:00Z"
+        }
+      ]
+    }
+  ],
+  "extracted_evidence": [
+    {
+      "evidence_id": "ev-contradictory-status",
+      "source_id": "src-contradiction-registry",
+      "claim": "Synthetic company status is inconsistent across fixture sources.",
+      "extracted_value": "active vs inactive",
+      "status": "CONTRADICTED",
+      "confidence": 0.91,
+      "citations": [
+        {
+          "source_id": "src-contradiction-registry",
+          "citation_type": "URL",
+          "locator": "https://example.test/fixture-contradiction-registry#status",
+          "excerpt": "Status values conflict.",
+          "retrieved_at": "2025-01-15T00:00:00Z"
+        }
+      ],
+      "missing_evidence": [],
+      "contradictions": [
+        "Registry and filing status cannot both be true."
+      ],
+      "notes": "Synthetic contradiction case."
+    }
+  ],
+  "missing_evidence": [],
+  "contradictions": [
+    "Registry status conflicts with synthetic filing status."
+  ],
+  "tool_errors": []
+}

@@ -1,0 +1,58 @@
+{
+  "schema_version": "1.0",
+  "task_type": "SOURCE_AND_EVIDENCE_RESEARCH",
+  "run_id": "fixture-agent-clean",
+  "target_company": "Fixture Clean GmbH",
+  "research_question": "Confirm synthetic registry status and filing availability.",
+  "generated_at": "2025-01-15T00:00:00Z",
+  "candidate_sources": [
+    {
+      "source_id": "src-clean-registry",
+      "title": "Fixture Clean GmbH Registry Extract",
+      "source_type": "GOVERNMENT_REGISTRY",
+      "url": "https://example.test/fixture-clean-registry",
+      "identifier": null,
+      "publisher": "Fixture Registry",
+      "retrieval_date": "2025-01-15T00:00:00Z",
+      "confidence": 0.96,
+      "relevance": 0.95,
+      "provenance_notes": "Synthetic source discovered from fixture index.",
+      "missing_evidence": [],
+      "contradictions": [],
+      "citations": [
+        {
+          "source_id": "src-clean-registry",
+          "citation_type": "URL",
+          "locator": "https://example.test/fixture-clean-registry",
+          "excerpt": "Registry status active.",
+          "retrieved_at": "2025-01-15T00:00:00Z"
+        }
+      ]
+    }
+  ],
+  "extracted_evidence": [
+    {
+      "evidence_id": "ev-clean-status",
+      "source_id": "src-clean-registry",
+      "claim": "Fixture Clean GmbH has an active synthetic registry status.",
+      "extracted_value": "active",
+      "status": "PRESENT",
+      "confidence": 0.95,
+      "citations": [
+        {
+          "source_id": "src-clean-registry",
+          "citation_type": "URL",
+          "locator": "https://example.test/fixture-clean-registry#status",
+          "excerpt": "Status: active.",
+          "retrieved_at": "2025-01-15T00:00:00Z"
+        }
+      ],
+      "missing_evidence": [],
+      "contradictions": [],
+      "notes": "Synthetic clean evidence item."
+    }
+  ],
+  "missing_evidence": [],
+  "contradictions": [],
+  "tool_errors": []
+}
