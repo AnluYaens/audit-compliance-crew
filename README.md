@@ -132,11 +132,11 @@ Local orchestration layer.
 
 This folder prepares the project for a future Durable Functions style workflow.
 
-### `tools/compliance_tools.py`
+### `ai/`
 
-Thin CrewAI wrapper layer.
+Safe AI-assistance layer.
 
-CrewAI tools now call deterministic Python services. CrewAI is no longer the source of truth for compliance decisions.
+This folder contains agent contracts, prompts, deterministic mock agents, and guardrail wrappers. These components may assist with research, explanation, or memo wording, but they do not own final compliance decisions.
 
 ---
 

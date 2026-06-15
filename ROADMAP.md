@@ -38,16 +38,15 @@ Purpose: Prove that deterministic Python can produce auditable acceptance decisi
 
 Expected files/modules:
 
-- `main.py`
-- `models.py`
-- `agents.py`
-- `tasks.py`
-- `tools/compliance_tools.py`
-- `test_pipeline.py`
+- `app/run_full_planning.py`
+- `schemas/`
+- `services/`
+- `storage/`
+- `tests/`
 
 Why it matters: Establishes the initial compliance use case and smoke cases.
 
-Constraints: Legacy prototype behavior should not become the final architecture if it conflicts with service boundaries.
+Public cleanup note: Earlier CrewAI prototype entrypoints were removed from the active repository after the deterministic service architecture became the source of truth.
 
 ## Phase 2 - Completed: Azure-Ready Deterministic Architecture
 
