@@ -1,171 +1,138 @@
-# Audit Compliance Crew - Azure-Ready Local Compliance Engine
+# Audit Compliance Crew
 
-This project is a local-first compliance and audit-planning prototype designed to evolve toward an Azure Functions / Durable Functions architecture.
-
-The system demonstrates an AI governance pattern where Python owns deterministic compliance decisions, while LLMs and agents are used only for language synthesis, reporting, and memo drafting.
-
----
-
-## Current Architecture
-
-The current architecture is deterministic-first:
-
-```text
-Company input
-    ↓
-Deterministic ingestion service
-    ↓
-Independence and sanctions screening services
-    ↓
-Source registry and deterministic source scoring
-    ↓
-Deterministic risk scoring service
-    ↓
-Acceptance pipeline service
-    ↓
-Evidence bundle
-    ↓
-Final decision: CONTINUE / MANUAL_REVIEW / REJECT
-```
-
-The LLM is not the decision-maker. The LLM may help write a memo, but it does not decide whether the client is accepted, rejected, or sent to manual review.
-
----
+Audit Compliance Crew is a deterministic-first, AI-assisted audit planning and
+compliance prototype. It demonstrates how Python services, schemas, fixtures,
+and tests can own compliance routing while LLM-style agents support explanation,
+research contracts, and memo wording.
 
 ## Core Principle
 
-AI supports the process, but Python controls the compliance outcome.
+**Python decides. Agents assist.**
 
-Python services own:
+The final compliance outcome is produced by deterministic Python logic, not by
+an LLM. Agents can help draft narratives, summarize structured findings, or
+prepare research inputs, but they do not decide whether an engagement should
+`CONTINUE`, move to `MANUAL_REVIEW`, or be `REJECT`.
 
-- data validation
-- deterministic screening
-- risk scoring
-- fail-closed routing
-- final acceptance decision
-- evidence bundle creation
+## Key Features
 
-LLMs and agents are allowed only for:
+- Deterministic compliance routing for synthetic audit planning scenarios.
+- Explicit final outcomes: `CONTINUE`, `MANUAL_REVIEW`, and `REJECT`.
+- Schema-validated inputs and outputs for pipeline-changing data.
+- Fail-closed handling that routes uncertain or incomplete cases to manual
+  review.
+- Synthetic CRM, holdings, control, and evidence fixtures for repeatable demos.
+- Evidence bundle outputs that preserve decision reasons for auditability.
+- Focused service boundaries for decisions, storage, orchestration, AI support,
+  and manual controls.
+- Test coverage for deterministic rules, schema contracts, orchestration paths,
+  and safety-oriented edge cases.
 
-- memo drafting
-- report formatting
-- narrative synthesis
-- explanation of validated evidence
+## Architecture Overview
 
----
+The project is organized around a deterministic core with optional AI-assist
+surfaces around it.
 
-## Key Decision Rules
+```text
+Company input
+    |
+Deterministic ingestion service
+    |
+Independence and sanctions screening services
+    |
+Source registry and deterministic source scoring
+    |
+Deterministic risk scoring service
+    |
+Acceptance pipeline service
+    |
+Evidence bundle
+    |
+Final decision: CONTINUE / MANUAL_REVIEW / REJECT
+```
+
+- `schemas/` defines structured contracts used by the pipeline.
+- `services/` contains deterministic compliance and decision-support logic.
+- `storage/` contains local persistence helpers for demo data.
+- `orchestration/` coordinates the pipeline without handing final decisions to
+  agents.
+- `ai/` contains AI-facing helper code for explanatory or drafting workflows.
+- `manual_controls/` contains manual-review-oriented controls and examples.
+- `data/` and `tests/fixtures/` contain synthetic demo data only.
+- `tests/` validates deterministic behavior and contract boundaries.
+
+## Deterministic Decision Rules
+
+The compliance pipeline is designed so that deterministic rules own final
+routing:
 
 | Scenario | Final Decision |
-|---|---|
-| Independence conflict | REJECT |
-| Sanctions hit | REJECT |
-| Unknown or missing client data | MANUAL_REVIEW |
-| Missing, stale, contradictory, unverified, or weak required source support | MANUAL_REVIEW |
-| High engagement risk | MANUAL_REVIEW |
-| Clean screening + low/moderate risk | CONTINUE |
+| --- | --- |
+| Independence conflict | `REJECT` |
+| Sanctions hit | `REJECT` |
+| Unknown or missing client data | `MANUAL_REVIEW` |
+| Missing, stale, contradictory, unverified, or weak required source support | `MANUAL_REVIEW` |
+| High engagement risk | `MANUAL_REVIEW` |
+| Clean screening with low or moderate risk | `CONTINUE` |
 
-Source scoring is a fail-closed support check. It may route weak evidence to
-`MANUAL_REVIEW`, but it does not produce `REJECT`; hard rejection remains limited
-to deterministic rejection criteria such as independence conflicts and sanctions
-hits.
+Additional safeguards:
 
----
+- `CONTINUE` is allowed only when required checks pass and no blocking issue is
+  present.
+- `MANUAL_REVIEW` is used when a case is uncertain, incomplete, ambiguous, or
+  requires human judgment.
+- `REJECT` is used when deterministic blocking criteria are met.
+- Missing, malformed, or schema-invalid pipeline-changing data must not be
+  silently accepted.
+- AI-generated content can explain or draft, but cannot override deterministic
+  decision logic.
 
-## Current Test Scenarios
+## AI Governance
 
-| Company | Expected Result | Reason |
-|---|---|---|
-| Quantum Cybernetics | REJECT | Independence conflict |
-| Vanguard Mining Corp | REJECT | Sanctions hit + high risk |
-| Apex Energy Group | MANUAL_REVIEW | High engagement risk |
-| GreenLeaf Organics | CONTINUE | Clean screening |
-| Unknown Company ABC | MANUAL_REVIEW | Missing client data / fail-closed |
+Audit Compliance Crew treats LLMs and agents as assistants, not authorities.
 
----
+- LLMs and agents do not own final compliance decisions.
+- Any AI output that could affect the pipeline must validate through schemas
+  before it is used.
+- Uncertainty fails closed by routing cases to `MANUAL_REVIEW`.
+- Human review remains the correct path for judgment-heavy, unclear, or
+  exception-based scenarios.
 
-## Important Modules
+## Tech Stack
 
-### `schemas/contracts.py`
+- Python 3
+- Pytest
+- Pydantic-style schema validation
+- Local JSON and CSV demo fixtures
+- Deterministic service modules
+- Standard-library compile checks
+- Optional AI-assist integration points
 
-Strict Pydantic data contracts for ingestion, screening, and risk outputs.
+## Install And Run Locally
 
-These contracts prevent loose JSON from becoming the source of truth.
-
-### `schemas/source_registry.py`
-
-Structured source provenance contracts.
-
-`SourceRecord` captures source identity, type, publisher, retrieval date,
-freshness, confidence, relevance, notes, and contradiction flags. `SourceRegistry`
-groups those records for a run before deterministic scoring.
-
-### `services/`
-
-Deterministic business logic layer.
-
-This folder contains the logic that will later map cleanly to Azure Function activity steps.
-
-### `services/source_scoring_service.py`
-
-Deterministic source scoring for authority, relevance, freshness, completeness,
-confidence, and contradictions.
-
-Agents may discover, extract, or summarize source metadata, but validated Python
-services score it and decide whether the supported workflow can continue.
-
-### `services/acceptance_pipeline_service.py`
-
-Main deterministic acceptance pipeline.
-
-This service directly calls ingestion, screening, sanctions, and risk scoring logic without relying on agent tool-calling.
-
-### `manual_controls/`
-
-Generic demo control matrix foundation.
-
-This layer contains synthetic, public-safe control metadata that can be used to
-exercise deterministic planning logic without publishing proprietary manual
-content.
-
-### `orchestration/`
-
-Local orchestration layer.
-
-This folder prepares the project for a future Durable Functions style workflow.
-
-### `ai/`
-
-Safe AI-assistance layer.
-
-This folder contains agent contracts, prompts, deterministic mock agents, and guardrail wrappers. These components may assist with research, explanation, or memo wording, but they do not own final compliance decisions.
-
----
-
-## Local Development
-
-Activate the virtual environment:
+Create and activate a virtual environment:
 
 ```bash
+python -m venv .venv
 source .venv/bin/activate
 ```
 
-Run tests:
+Install project dependencies:
 
 ```bash
-python -m pytest tests
+.venv/bin/python -m pip install -r requirements.txt
 ```
 
-Run the Phase 2 local runner:
+Run the local runner:
 
 ```bash
-python -m app.local_runner
+.venv/bin/python -m app.local_runner
 ```
 
 Run the deterministic acceptance pipeline manually:
 
 ```bash
-python - <<'PY'
+.venv/bin/python - <<'PY'
 from services.acceptance_pipeline_service import run_acceptance_pipeline
 
 for company in [
@@ -182,7 +149,7 @@ for company in [
 PY
 ```
 
-Expected behavior:
+Expected demo behavior:
 
 ```text
 Quantum Cybernetics => FinalDecision.REJECT
@@ -192,76 +159,59 @@ GreenLeaf Organics => FinalDecision.CONTINUE
 Unknown Company ABC => FinalDecision.MANUAL_REVIEW
 ```
 
----
+## Run Tests
 
-## Azure Migration Direction
+Run the test suite:
 
-The project is still local-first, but the folder structure is designed to migrate later toward Azure.
+```bash
+.venv/bin/python -m pytest tests
+```
 
-Future mapping:
+Run compile checks:
 
-| Local Module | Future Azure Equivalent |
-|---|---|
-| `services/ingestion_service.py` | Azure Function activity |
-| `services/screening_service.py` | Azure Function activity |
-| `services/risk_scoring_service.py` | Azure Function activity |
-| `services/acceptance_pipeline_service.py` | Durable Functions orchestrator / activity chain |
-| `schemas/contracts.py` | Shared function contracts |
-| `storage/` | Evidence ledger storage |
-| `ai/` | Azure AI Foundry reporting layer |
-
----
-
-## Why This Architecture Matters
-
-The project avoids letting an LLM make binary compliance decisions.
-
-Instead, the system uses:
-
-- strict Pydantic schemas
-- deterministic Python services
-- fail-closed routing
-- evidence bundles
-- manual review escalation
-- optional AI-assisted reporting
-
-This makes the project a stronger example of AI governance, auditability, and professional compliance automation.
-
----
-
-## Current Milestone
-
-Completed:
-
-- Phase 2.1: Azure-ready local architecture
-- Phase 2.2A: Strict contracts moved into `schemas/`
-- Phase 2.2B: Deterministic logic extracted into `services/`
-- Phase 2.2C: Deterministic acceptance pipeline implemented
-- Phase 4.1-4.3: Source registry, source scoring, evidence bundle source support, and memo reporting
-- High-risk engagements now route to manual review
-- Tests passing
+```bash
+.venv/bin/python -m compileall schemas services storage orchestration ai tests
+```
 
 Current validation:
 
-```bash
-python -m pytest tests
-```
-
-Expected:
-
 ```text
-9 passed
+87 passed
 ```
 
----
+## Azure And Deployment Notes
 
-## Next Planned Steps
+This repository does not include production credentials, live cloud resources,
+deployment files, or a real Azure deployment. Any Azure-related direction should
+be treated as future-oriented architecture planning only.
 
-Next phases:
+Future-oriented mapping:
 
-1. Expand the manual control matrix.
-2. Add planning, materiality, and risk assessment modules.
-3. Generate planning memos from validated evidence bundles.
-4. Add persistent evidence storage.
-5. Prepare Azure Function boundaries.
-6. Later migrate orchestration to Azure Durable Functions.
+| Local Module | Possible Future Azure Equivalent |
+| --- | --- |
+| `services/ingestion_service.py` | Azure Function activity |
+| `services/screening_service.py` | Azure Function activity |
+| `services/risk_scoring_service.py` | Azure Function activity |
+| `services/acceptance_pipeline_service.py` | Durable Functions orchestrator or activity chain |
+| `schemas/contracts.py` | Shared function contracts |
+| `storage/` | Evidence ledger storage |
+| `ai/` | AI-assisted reporting layer |
+
+## Public Safety Disclaimer
+
+This project is a public portfolio prototype built with synthetic demo data.
+
+- Synthetic demo data only.
+- No real client data.
+- No production credentials.
+- No proprietary audit manual content.
+- Not an official audit firm product.
+- Not professional, legal, audit, assurance, compliance, or regulatory advice.
+
+## License
+
+This project is proprietary and source-available for portfolio/review purposes only.
+
+No permission is granted to use, copy, modify, distribute, sell, host, deploy, train on, or create derivative works from this software without prior written permission from the copyright holder.
+
+See [LICENSE](LICENSE) for details.
