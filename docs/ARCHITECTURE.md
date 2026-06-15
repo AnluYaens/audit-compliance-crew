@@ -1,6 +1,6 @@
 # Architecture
 
-BDO Compliance Crew uses a deterministic-first architecture for audit planning and compliance.
+Audit Compliance Crew uses a deterministic-first architecture for audit planning and compliance.
 
 ```text
 Python decides. Agents assist.
@@ -26,7 +26,7 @@ Source discovery
 
 - `schemas/`: Pydantic contracts for decisions, evidence bundles, materiality, risk assessment, audit response, and future agent outputs.
 - `services/`: deterministic business logic. This is where compliance and audit planning decisions live.
-- `manual_controls/`: structured rules derived from audit manuals and control expectations.
+- `manual_controls/`: synthetic demo control metadata used to exercise deterministic planning logic without proprietary manual content.
 - `tools/`: thin wrappers only. Tools call services; they do not contain business logic.
 - `storage/`: evidence and memo persistence.
 - `orchestration/`: workflow coordination for local runs and future Durable Functions migration.

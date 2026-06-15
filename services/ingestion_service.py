@@ -17,7 +17,7 @@ from services.compliance_common import (
 def read_client_crm_data_service(company_name: str) -> str:
     """
     Reads the client_crm.json database file and returns a validated CRM contract.
-    This is deterministic service logic with no CrewAI dependency.
+    This is deterministic service logic with no agent runtime dependency.
     """
     try:
         request = ClientCRMReadRequest(company_name=company_name)

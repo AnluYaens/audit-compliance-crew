@@ -1,7 +1,7 @@
 # Azure Functions Boundary Preparation
 
 This directory documents future Azure Function boundaries for the local-first
-BDO Compliance Crew services.
+Audit Compliance Crew services.
 
 The project is not using Azure Functions yet. These notes are preparation only:
 

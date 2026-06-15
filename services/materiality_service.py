@@ -5,7 +5,7 @@ from schemas.materiality import BenchmarkType, MaterialityRequest, MaterialityRe
 
 
 # Prototype policy ranges.
-# These are configurable project ranges, not hard-coded final BDO policy.
+# These are configurable demo ranges, not hard-coded final firm policy.
 SUGGESTED_MATERIALITY_RANGES: dict[BenchmarkType, tuple[float, float]] = {
     "profit_before_tax": (0.03, 0.10),
     "revenue": (0.005, 0.02),

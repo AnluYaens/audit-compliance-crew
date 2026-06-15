@@ -1,4 +1,4 @@
-# BDO Compliance Crew Roadmap
+# Audit Compliance Crew Roadmap
 
 This roadmap keeps the project aligned with the core architecture rule:
 
@@ -46,7 +46,7 @@ Expected files/modules:
 
 Why it matters: Establishes the initial compliance use case and smoke cases.
 
-Public cleanup note: Earlier CrewAI prototype entrypoints were removed from the active repository after the deterministic service architecture became the source of truth.
+Public cleanup note: Earlier agent-runtime prototype entrypoints were removed from the active repository after the deterministic service architecture became the source of truth.
 
 ## Phase 2 - Completed: Azure-Ready Deterministic Architecture
 

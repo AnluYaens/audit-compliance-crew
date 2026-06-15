@@ -1,8 +1,8 @@
-# BDO Compliance Crew — Azure-Ready Local Compliance Engine
+# Audit Compliance Crew - Azure-Ready Local Compliance Engine
 
 This project is a local-first compliance and audit-planning prototype designed to evolve toward an Azure Functions / Durable Functions architecture.
 
-The system demonstrates an AI governance pattern where Python owns deterministic compliance decisions, while LLMs and CrewAI are used only for language synthesis, reporting, and memo drafting.
+The system demonstrates an AI governance pattern where Python owns deterministic compliance decisions, while LLMs and agents are used only for language synthesis, reporting, and memo drafting.
 
 ---
 
@@ -45,7 +45,7 @@ Python services own:
 - final acceptance decision
 - evidence bundle creation
 
-LLMs / CrewAI are allowed only for:
+LLMs and agents are allowed only for:
 
 - memo drafting
 - report formatting
@@ -118,13 +118,15 @@ services score it and decide whether the supported workflow can continue.
 
 Main deterministic acceptance pipeline.
 
-This service directly calls ingestion, screening, sanctions, and risk scoring logic without relying on CrewAI tool-calling.
+This service directly calls ingestion, screening, sanctions, and risk scoring logic without relying on agent tool-calling.
 
 ### `manual_controls/`
 
-Manual-derived control matrix foundation.
+Generic demo control matrix foundation.
 
-This is where audit manual requirements can be translated into structured controls.
+This layer contains synthetic, public-safe control metadata that can be used to
+exercise deterministic planning logic without publishing proprietary manual
+content.
 
 ### `orchestration/`
 

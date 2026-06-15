@@ -9,8 +9,8 @@ RISK_ASSESSMENT_CONTROLS = [
     ManualControl(
         control_id="RISK-001",
         domain=ControlDomain.RISK_ASSESSMENT,
-        chapter="Chapter 11 - Risk Assessment Procedures",
-        paragraph_reference="Chapter 11",
+        chapter="Risk Assessment Procedures",
+        paragraph_reference="Risk Assessment Procedures",
         authority_level=AuthorityLevel.ISA_REQUIREMENT,
         summary=(
             "The audit team must identify and assess risks of material "

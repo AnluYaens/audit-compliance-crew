@@ -1,6 +1,6 @@
 # Agent Operating Rules
 
-BDO Compliance Crew may use agents to assist audit work, but agents do not own compliance decisions.
+Audit Compliance Crew may use agents to assist audit work, but agents do not own compliance decisions.
 
 ```text
 Agents propose.

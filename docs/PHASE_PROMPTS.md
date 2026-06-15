@@ -9,7 +9,7 @@ Python decides. Agents assist.
 ## Master Phase Prompt Template
 
 ```text
-You are working on BDO Compliance Crew, a deterministic-first, agent-assisted audit planning and compliance engine.
+You are working on Audit Compliance Crew, a deterministic-first, agent-assisted audit planning and compliance engine.
 
 Goal:
 <state the phase goal>
@@ -48,7 +48,7 @@ Validation commands:
 Forbidden actions:
 - Do not add real API calls.
 - Do not add Azure SDKs or credentials.
-- Do not add CrewAI decision logic.
+- Do not add real agent-runtime decision logic.
 - Do not move business logic into tools/.
 - Do not let agents decide final decisions.
 - Do not remove fail-closed behavior.
@@ -67,7 +67,7 @@ Goal:
 Create a deterministic source registry and source scoring layer.
 
 Context:
-BDO Compliance Crew must track evidence provenance before future agents can acquire evidence. Source scoring is deterministic and must route weak, stale, contradictory, or unverified sources to MANUAL_REVIEW.
+Audit Compliance Crew must track evidence provenance before future agents can acquire evidence. Source scoring is deterministic and must route weak, stale, contradictory, or unverified sources to MANUAL_REVIEW.
 
 Files to inspect:
 - schemas/evidence.py
@@ -371,7 +371,7 @@ Validation commands:
 
 Forbidden actions:
 - Do not call a real LLM.
-- Do not add CrewAI logic.
+- Do not add real agent-runtime logic.
 - Do not add web/API calls.
 
 Acceptance criteria:
