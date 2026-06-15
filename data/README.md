@@ -1,15 +1,18 @@
-# Local Compliance Data
+# Demo Compliance Data
 
-This directory is reserved for local CRM, partner holdings, and sanctions datasets.
+This directory contains synthetic demo datasets used by the local deterministic
+audit planning runner and tests.
 
-The real `*.json` and `*.csv` files are intentionally ignored by Git because they may
-contain client, partner, sanctions, financial, or other compliance-sensitive data.
-
-Expected local filenames:
+The tracked files in this folder are safe sample data only:
 
 - `client_crm.json`
 - `internal_holdings.csv`
 - `sanctions.json`
 
-Use sanitized `*.example.json` or `*.example.csv` fixtures if sample data needs to be
-shared in the repository.
+They do not contain real client data, real partner holdings, real sanctions data,
+production credentials, or confidential information.
+
+Do not replace these tracked demo files with real/private compliance datasets.
+
+If private local data is ever needed, store it outside the repository or use
+ignored local-only filenames documented in `.gitignore`.
