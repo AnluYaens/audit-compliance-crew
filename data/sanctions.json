@@ -1,0 +1,14 @@
+{
+  "last_updated": "2026-05-20",
+  "blacklisted_entities": [
+    "Volkov Strategic Holdings",
+    "Orion Heavy Industries",
+    "Meridian Bunkering Ltd"
+  ],
+  "blacklisted_individuals": [
+    "Dimitri Volkov",
+    "Saeed Al-Kouri",
+    "Viktor Ivanov"
+  ],
+  "restricted_regions": ["North Korea", "Iran", "Syria", "Crimea Region"]
+}
