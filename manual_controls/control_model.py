@@ -4,8 +4,8 @@ from pydantic import BaseModel, Field
 
 class AuthorityLevel(str, Enum):
     ISA_REQUIREMENT = "ISA_REQUIREMENT"
-    BDO_POLICY_REQUIREMENT = "BDO_POLICY_REQUIREMENT"
-    BDO_DE_REQUIREMENT = "BDO_DE_REQUIREMENT"
+    FIRM_POLICY_REQUIREMENT = "FIRM_POLICY_REQUIREMENT"
+    LOCAL_FIRM_REQUIREMENT = "LOCAL_FIRM_REQUIREMENT"
     APPLICATION_GUIDANCE = "APPLICATION_GUIDANCE"
 
 
@@ -30,4 +30,3 @@ class ManualControl(BaseModel):
     required_outputs: list[str] = Field(default_factory=list)
     fail_closed_if_missing: bool = True
     ai_allowed: bool = False
-

@@ -1,6 +1,6 @@
-# BDO Compliance Crew
+# Audit Compliance Crew
 
-BDO Compliance Crew is a deterministic-first, agent-assisted audit planning and compliance engine.
+Audit Compliance Crew is a deterministic-first, agent-assisted audit planning and compliance engine.
 
 The project direction is simple:
 
@@ -8,7 +8,7 @@ The project direction is simple:
 Python decides. Agents assist.
 ```
 
-LLMs, CrewAI, and other agents may discover, extract, summarize, review, and draft. They must not decide final compliance outcomes.
+LLMs and agents may discover, extract, summarize, review, and draft. They must not decide final compliance outcomes.
 
 ## Current Architecture
 
@@ -45,7 +45,7 @@ REJECT > MANUAL_REVIEW > CONTINUE
 - `tools/`: thin wrappers around deterministic services for agent/tool interfaces.
 - `ai/`: safe future agent wrappers, prompts, and structured output contracts.
 - `storage/`: persistence for evidence bundles and planning memos.
-- `manual_controls/`: manual-derived control rules and control metadata.
+- `manual_controls/`: generic demo control rules and public-safe control metadata.
 - `orchestration/`: workflow coordination that can later map to Durable Functions.
 - `app/`: local runners and command entry points.
 - `tests/`: pytest unit and integration coverage.
@@ -55,7 +55,7 @@ REJECT > MANUAL_REVIEW > CONTINUE
 ## Non-Negotiable Rules
 
 1. Do not move business logic into `tools/`.
-2. Do not let CrewAI, LLMs, or agents decide `CONTINUE`, `MANUAL_REVIEW`, or `REJECT`.
+2. Do not let LLMs or agents decide `CONTINUE`, `MANUAL_REVIEW`, or `REJECT`.
 3. Do not remove fail-closed behavior.
 4. Every new feature must include schemas, services, and tests.
 5. Run `python -m pytest tests` before finishing.

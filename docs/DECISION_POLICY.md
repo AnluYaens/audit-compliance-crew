@@ -1,6 +1,6 @@
 # Decision Policy
 
-Final compliance and audit planning decisions are deterministic. LLMs, CrewAI, and agents may assist with discovery and drafting, but Python assigns final decision values.
+Final compliance and audit planning decisions are deterministic. LLMs and agents may assist with discovery and drafting, but Python assigns final decision values.
 
 ## Final Decision Values
 

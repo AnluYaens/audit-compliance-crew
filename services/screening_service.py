@@ -25,7 +25,7 @@ from services.compliance_common import (
 def check_partner_independence_service(company_name: str) -> str:
     """
     Scans the internal partner holdings registry using normalized string lookups.
-    This is deterministic service logic with no CrewAI dependency.
+    This is deterministic service logic with no agent runtime dependency.
     """
     try:
         request = PartnerIndependenceRequest(company_name=company_name)
@@ -101,7 +101,7 @@ def scan_sanctions_watchlist_service(
 ) -> str:
     """
     Cross-references corporate metadata against global sanctions records.
-    This is deterministic service logic with no CrewAI dependency.
+    This is deterministic service logic with no agent runtime dependency.
     """
     try:
         request = WatchlistScanRequest(

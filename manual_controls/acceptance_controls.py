@@ -9,9 +9,9 @@ ACCEPTANCE_CONTROLS = [
     ManualControl(
         control_id="ACC-001",
         domain=ControlDomain.ACCEPTANCE,
-        chapter="Chapter 3 - Acceptance and Continuance",
-        paragraph_reference="Chapter 3",
-        authority_level=AuthorityLevel.BDO_POLICY_REQUIREMENT,
+        chapter="Acceptance and Continuance",
+        paragraph_reference="Acceptance and Continuance",
+        authority_level=AuthorityLevel.FIRM_POLICY_REQUIREMENT,
         summary=(
             "Acceptance and continuance must be evaluated before proceeding "
             "with the engagement."

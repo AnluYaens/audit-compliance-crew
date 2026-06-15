@@ -27,7 +27,7 @@ class AIOutputRecord(BaseModel):
 
 class AuditPlanningEvidenceBundle(BaseModel):
     run_id: str
-    manual_version: str = "BDO DE Audit Manual 2025.01"
+    manual_version: str = "Demo Audit Planning Control Set 2025.01"
     target_company: str
     engagement_type: str = "Financial Statement Audit"
 

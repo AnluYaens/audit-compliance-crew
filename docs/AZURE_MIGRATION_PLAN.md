@@ -1,6 +1,6 @@
 # Azure Migration Plan
 
-BDO Compliance Crew is local-first today and Azure-ready by design. The migration should preserve deterministic decision ownership.
+Audit Compliance Crew is local-first today and Azure-ready by design. The migration should preserve deterministic decision ownership.
 
 Do not add Azure SDKs yet. Do not add credentials. Do not deploy anything.
 

@@ -9,8 +9,8 @@ MATERIALITY_CONTROLS = [
     ManualControl(
         control_id="MAT-001",
         domain=ControlDomain.MATERIALITY,
-        chapter="Chapter 8 - Materiality",
-        paragraph_reference="Chapter 8",
+        chapter="Materiality",
+        paragraph_reference="Materiality",
         authority_level=AuthorityLevel.ISA_REQUIREMENT,
         summary=(
             "Materiality must be considered during planning and must support "
