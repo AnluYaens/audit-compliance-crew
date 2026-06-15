@@ -31,12 +31,20 @@ env/
 .codex/
 
 # ============================================================
-# Local/private compliance datasets
-# Keep real/private compliance files out of Git.
-# Only commit sanitized example datasets.
+# Compliance datasets
+# The tracked JSON/CSV files in data/ are synthetic demo data.
+# Do not replace them with real/private client or compliance data.
+# Ignore any additional local/private datasets by default.
 # ============================================================
 data/*.json
 data/*.csv
+
+# Tracked synthetic demo datasets required for local demo/test runs.
+!data/client_crm.json
+!data/internal_holdings.csv
+!data/sanctions.json
+
+# Optional sanitized examples may also be committed.
 !data/*.example.json
 !data/*.example.csv
 !data/README.md

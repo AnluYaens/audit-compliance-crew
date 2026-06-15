@@ -1,0 +1,34 @@
+[
+  {
+    "Company_Name": "Quantum Cybernetics",
+    "Industry": "Technology",
+    "CEO_Name": "Elena Rostova",
+    "Global_Offices": ["United States", "Germany", "Japan"],
+    "Annual_Revenue_USD": 45000000,
+    "Financial_Stability_Rating": "Medium"
+  },
+  {
+    "Company_Name": "Vanguard Mining Corp",
+    "Industry": "Extractives",
+    "CEO_Name": "Dimitri Volkov",
+    "Global_Offices": ["United Kingdom", "Venezuela", "Cyprus"],
+    "Annual_Revenue_USD": 120000000,
+    "Financial_Stability_Rating": "Low"
+  },
+  {
+    "Company_Name": "Apex Energy Group",
+    "Industry": "Energy",
+    "CEO_Name": "Marcus Sterling",
+    "Global_Offices": ["United States", "Iraq", "Libya"],
+    "Annual_Revenue_USD": 85000000,
+    "Financial_Stability_Rating": "High"
+  },
+  {
+    "Company_Name": "GreenLeaf Organics",
+    "Industry": "Agriculture",
+    "CEO_Name": "Chloe Miller",
+    "Global_Offices": ["Canada", "France"],
+    "Annual_Revenue_USD": 12000000,
+    "Financial_Stability_Rating": "High"
+  }
+]
