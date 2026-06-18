@@ -105,7 +105,7 @@ Do not:
 1. Document function boundaries.
 2. Confirm schema contracts for each service.
 3. Add local adapter tests that simulate activity calls.
-4. Create a minimal orchestrator plan.
+4. Create a minimal orchestrator plan. See `azure_functions/prototype_plan.md`.
 5. Add Azure SDKs only when explicitly approved.
 6. Prototype one end-to-end workflow with non-production data.
 7. Add observability, audit trail, and security controls.
