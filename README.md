@@ -1,18 +1,19 @@
 # Audit Compliance Crew
 
-Audit Compliance Crew is a deterministic-first, AI-assisted audit planning and
-compliance prototype. It demonstrates how Python services, schemas, fixtures,
-and tests can own compliance routing while LLM-style agents support explanation,
-research contracts, and memo wording.
+Audit Compliance Crew is a deterministic-first audit planning and compliance
+prototype. The active short-term plan is a 10-day MVP demo using synthetic data.
+It shows how Python services, schemas, fixtures, and tests can own compliance
+routing while agent-like lanes assist with research, local verification, and
+memo/report support.
 
 ## Core Principle
 
 **Python decides. Agents assist.**
 
-The final compliance outcome is produced by deterministic Python logic, not by
-an LLM. Agents can help draft narratives, summarize structured findings, or
-prepare research inputs, but they do not decide whether an engagement should
-`CONTINUE`, move to `MANUAL_REVIEW`, or be `REJECT`.
+Final compliance outcomes come from deterministic Python logic. Agents may draft
+narratives, summarize structured findings, or prepare research inputs, but they
+do not decide whether an engagement should `CONTINUE`, move to
+`MANUAL_REVIEW`, or be `REJECT`.
 
 ## Key Features
 
@@ -23,6 +24,10 @@ prepare research inputs, but they do not decide whether an engagement should
   review.
 - Synthetic CRM, holdings, control, and evidence fixtures for repeatable demos.
 - Evidence bundle outputs that preserve decision reasons for auditability.
+- Planned MVP lanes for public research with non-sensitive hints and offline
+  verification with local artifacts.
+- Planned safe hint bridge to keep confidential client data out of public
+  research and internet-connected tools.
 - Focused service boundaries for decisions, storage, orchestration, AI support,
   and manual controls.
 - Test coverage for deterministic rules, schema contracts, orchestration paths,
@@ -89,14 +94,33 @@ Additional safeguards:
 
 ## AI Governance
 
-Audit Compliance Crew treats LLMs and agents as assistants, not authorities.
+Audit Compliance Crew treats LLMs and agents as assistants, not authorities. Any
+AI output that could affect the pipeline must validate through schemas before it
+is used, and uncertainty fails closed to `MANUAL_REVIEW`.
 
-- LLMs and agents do not own final compliance decisions.
-- Any AI output that could affect the pipeline must validate through schemas
-  before it is used.
-- Uncertainty fails closed by routing cases to `MANUAL_REVIEW`.
-- Human review remains the correct path for judgment-heavy, unclear, or
-  exception-based scenarios.
+Sensitive client data stays local or inside an approved isolated sandbox. Public
+research may receive only non-sensitive hints, such as company name, official
+website, annual report targets, regulator sources, sanctions-list targets, and
+reliable-news targets. Sensitive client data must not be sent to OpenAI servers,
+public search providers, cloud AI APIs, or internet-connected tools.
+
+## 10-Day MVP Direction
+
+The MVP is an architecture and deterministic pipeline demo, not a production
+system. It is expected to show:
+
+- synthetic CSV/JSON client artifact normalization
+- offline sandbox/internal verification over local artifacts
+- safe public-search hint filtering
+- public research through a mock or fixed provider
+- deterministic reconciliation of public and internal evidence
+- evidence bundle generation
+- JSON and Markdown demo outputs for review
+
+Deferred work includes Azure implementation, Durable Functions code, deployment
+templates, OCR, scanned PDF support, full Excel support, GraphRAG/vector search,
+real model runtimes, production sandbox hardening, full human review UI, and
+production security hardening.
 
 ## Tech Stack
 
@@ -182,8 +206,8 @@ Current validation:
 ## Azure And Deployment Notes
 
 This repository does not include production credentials, live cloud resources,
-deployment files, or a real Azure deployment. Any Azure-related direction should
-be treated as future-oriented architecture planning only.
+deployment files, or a real Azure deployment. Azure notes are future-oriented
+architecture planning only.
 
 Future-oriented mapping:
 
@@ -197,7 +221,7 @@ Future-oriented mapping:
 | `storage/` | Evidence ledger storage |
 | `ai/` | AI-assisted reporting layer |
 
-## Public Safety Disclaimer
+## Public Safety Notes
 
 This project is a public portfolio prototype built with synthetic demo data.
 
