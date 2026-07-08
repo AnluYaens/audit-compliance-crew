@@ -1,8 +1,10 @@
 # Azure Migration Plan
 
-Audit Compliance Crew is local-first today and Azure-ready by design. The migration should preserve deterministic decision ownership.
+Audit Compliance Crew is local-first today and Azure-ready by design. Any migration must preserve deterministic decision ownership.
 
-Do not add Azure SDKs yet. Do not add credentials. Do not deploy anything.
+Do not add Azure SDKs, credentials, deployment templates, cloud resources, or deployments yet.
+
+The active 10-day MVP is local-first and synthetic-data only. Azure implementation and Durable Functions code are deferred. MVP services should remain easy to wrap later, but business logic must stay in deterministic local services.
 
 ## Migration Principle
 
@@ -99,6 +101,8 @@ Do not:
 - add real API calls
 - move deterministic logic into function wrappers
 - use Azure as a reason to weaken local tests
+- treat the MVP as a production Azure design
+- send sensitive client data to cloud AI APIs or internet-connected tools
 
 ## Prototype Sequence
 
@@ -110,4 +114,4 @@ Do not:
 6. Prototype one end-to-end workflow with non-production data.
 7. Add observability, audit trail, and security controls.
 
-The first Azure prototype should be boring, narrow, and reversible.
+The first Azure prototype should be narrow and reversible.

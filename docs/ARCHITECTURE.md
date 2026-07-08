@@ -8,7 +8,25 @@ Python decides. Agents assist.
 
 Agents may help discover, extract, summarize, review, and draft. Deterministic Python services own validation, routing, and final decisions.
 
-## Architecture Vision
+## MVP Architecture Vision
+
+The active short-term plan is a 10-day MVP demo. It is local-first, uses synthetic data, and is not a production system. The MVP adds two assisted lanes around the deterministic core:
+
+```text
+Synthetic client artifacts
+-> deterministic CSV/JSON normalization
+-> offline sandbox/internal verifier
+-> safe hint bridge
+-> public/global research provider using non-sensitive hints
+-> deterministic evidence reconciliation
+-> evidence bundle
+-> deterministic final decision
+-> demo memo/report and auditor review
+```
+
+The public research lane may use mock or fixed public evidence. Real internet search is deferred unless a later mode explicitly approves it. The offline sandbox/internal lane works only with local normalized artifacts and must not have internet access or call cloud AI APIs.
+
+## Long-Term Architecture Vision
 
 ```text
 Source discovery
@@ -33,6 +51,14 @@ Source discovery
 - `ai/`: future safe agent wrappers and prompts.
 - `app/`: local runner entry points.
 - `tests/`: pytest coverage for services, pipelines, storage, and guardrails.
+
+## MVP Confidentiality Boundaries
+
+Sensitive client data stays local or inside an approved isolated sandbox and must not be sent to OpenAI servers, public search providers, cloud AI APIs, or internet-connected tools.
+
+Public research may receive only non-sensitive hints, such as company name, official website, public annual report targets, regulator sources, sanctions-list targets, and reliable-news targets. Offline sandbox/internal verification works only with local normalized client artifacts.
+
+Sandbox and public research outputs must validate through Pydantic schemas before deterministic services consume them. No agent may emit or override `CONTINUE`, `MANUAL_REVIEW`, or `REJECT`.
 
 ## Deterministic Data Flow
 
@@ -74,7 +100,7 @@ The evidence bundle is the controlled record for the pipeline. It contains:
 - final decision
 - manual review reasons
 
-Agents, memos, UI screens, and future Azure steps must read from validated evidence bundles rather than unsupported free-form text.
+Agents, memos, UI screens, and future Azure steps must read from validated evidence bundles, not unsupported free-form text.
 
 Source support is also recorded in the evidence bundle. A bundle may carry
 `SourceRecord` entries, a `SourceRegistryScoringResult`, and whether source
@@ -95,6 +121,8 @@ Future agents can sit around the deterministic core:
 - Quality review agents flag inconsistencies or missing support.
 
 All agent output that affects the pipeline must validate through Pydantic schemas before a service may consume it.
+
+For the MVP, agent-like behavior should be mock or deterministic first. Public research and sandbox verification may assist with structured findings, citations, confidence, contradictions, missing evidence, review reasons, and public-search hints. They do not decide final outcomes.
 
 ## Source Discovery Flow
 

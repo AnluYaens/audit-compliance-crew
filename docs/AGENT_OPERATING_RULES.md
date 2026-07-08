@@ -11,16 +11,7 @@ Auditor reviews.
 
 ## What Agents Can Do
 
-Agents may:
-
-- discover candidate public or client-provided sources
-- extract structured facts from documents
-- summarize validated evidence
-- propose source metadata and source quality observations
-- draft memo language based on evidence bundles
-- answer auditor questions using cited evidence
-- flag missing support, contradictions, or low confidence
-- propose manual review notes
+Agents may collect public source candidates from non-sensitive hints, inspect local normalized artifacts inside an approved offline sandbox, extract structured facts, summarize validated evidence, draft memo language, answer auditor questions from cited evidence, and flag missing support, contradictions, or low confidence.
 
 ## What Agents Cannot Do
 
@@ -36,20 +27,12 @@ Agents must not:
 - remove fail-closed behavior
 - call real external APIs unless explicitly approved
 - create production Azure integrations or credentials
+- send sensitive client data to OpenAI servers, public search providers, cloud AI APIs, or internet-connected tools
+- pass raw sandbox outputs directly to public/global research
 
 ## Required Structured Outputs
 
-Any agent output that affects the pipeline must use a Pydantic schema. The schema should capture:
-
-- source identifiers
-- extracted facts
-- confidence levels
-- missing evidence
-- contradictions
-- citations or provenance
-- source metadata fields such as identity, publisher, retrieval date, confidence, relevance, and contradiction flags
-- whether human review is required
-- any tool or model errors
+Any agent output that affects the pipeline must use a Pydantic schema. Depending on the workflow, the schema should capture source identifiers, extracted facts, confidence, missing evidence, contradictions, citations or provenance, review flags, and tool or model errors.
 
 Free-form agent text may be stored as a memo draft or review note, but it cannot become deterministic evidence until parsed and validated.
 
@@ -68,6 +51,26 @@ agent output
 If validation fails, the output must not be used as evidence. The failure should be recorded as a tool error or manual review reason.
 
 ## Agent Roles
+
+### Public Research Agent
+
+Uses only non-sensitive hints, such as company name, official website, public annual report targets, regulator sources, sanctions-list targets, and reliable-news targets. For the MVP, this lane may use a mock or fixed provider.
+
+Allowed output: public sources, citations, extracted public claims, confidence, contradictions, and review reasons.
+
+Forbidden output: confidential client data, final decisions, or unsupported claims.
+
+### Offline Sandbox/Internal Verifier
+
+Works only with local normalized client artifacts. It must not have internet access, call cloud AI APIs, or send confidential client data outside the local or approved isolated sandbox boundary.
+
+Allowed output: schema-valid findings, contradictions, missing evidence, confidence, review reasons, and safe public-search hint candidates.
+
+Forbidden output: final decisions or raw confidential data for public research.
+
+### Safe Hint Bridge
+
+This is deterministic Python service behavior, not agent discretion. The bridge filters sandbox-produced hint candidates before public research receives them, blocking confidential values, internal notes, uploaded document contents, private IDs, and sensitive client data.
 
 ### Research Scout Agent
 
@@ -133,15 +136,7 @@ Forbidden output: suppressing manual review reasons or approving a client.
 
 ## Manual Review Triggers for Agents
 
-Agent work must route to `MANUAL_REVIEW` when evidence is:
-
-- missing
-- contradictory
-- low-confidence
-- stale
-- unverified
-- uncited
-- outside the expected schema
+Agent-assisted work must route to `MANUAL_REVIEW` when evidence is missing, contradictory, low-confidence, stale, unverified, uncited, or outside the expected schema.
 
 The evidence bundle remains the source of truth.
 

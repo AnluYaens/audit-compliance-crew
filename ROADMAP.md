@@ -6,272 +6,314 @@ This roadmap keeps the project aligned with the core architecture rule:
 Python decides. Agents assist.
 ```
 
-Each phase should preserve deterministic decision ownership, strict schemas, fail-closed behavior, and Azure-ready service boundaries.
+The active direction is a focused 10-day MVP demo, not a broad long-term buildout. The MVP should demonstrate architecture, deterministic pipeline behavior, evidence handling, and security boundaries with synthetic data. It is not production-ready.
 
-## Phase 0 - Stabilization and Documentation
+Final decisions remain deterministic and limited to:
 
-Goal: Create the strategic documentation layer and make the current direction explicit.
+- `CONTINUE`
+- `MANUAL_REVIEW`
+- `REJECT`
 
-Purpose: Give future contributors and agents a stable operating manual before adding more capabilities.
+Decision priority remains:
+
+```text
+REJECT > MANUAL_REVIEW > CONTINUE
+```
+
+The evidence bundle remains the source of truth.
+
+## MVP Goal
+
+Build a demonstrable local-first audit planning flow that shows:
+
+- a public/global research lane using only non-sensitive search hints
+- an offline sandbox/internal verification lane using local normalized client artifacts
+- a safe hint bridge that prevents confidential data from reaching public research
+- deterministic reconciliation of public and internal evidence
+- human review routing for missing, weak, contradictory, stale, unclear, or low-confidence evidence
+- a synthetic end-to-end demo runner with JSON and Markdown outputs
+- service boundaries that can later run on a private server or behind Azure wrappers without moving business logic
+
+## Confidentiality Rules
+
+Sensitive client data must stay local or inside an approved isolated sandbox. It must not be sent to OpenAI servers, public search providers, cloud AI APIs, or internet-connected tools.
+
+Public research may receive only non-sensitive hints, such as company name, official website, public annual report targets, regulator sources, sanctions-list targets, and reliable-news targets. The offline sandbox/internal lane works only with local normalized client artifacts.
+
+Sandbox and public research outputs must validate through Pydantic schemas. No agent may emit or override `CONTINUE`, `MANUAL_REVIEW`, or `REJECT`.
+
+## Current Completed Foundation
+
+The existing repository already demonstrates the deterministic foundation:
+
+- strict schema contracts in `schemas/`
+- deterministic services in `services/`
+- local orchestration in `orchestration/`
+- evidence and memo persistence in `storage/`
+- synthetic demo controls and fixtures
+- source registry and deterministic source scoring
+- fail-closed decision priority
+- pytest coverage for the current deterministic pipeline
+
+Earlier long-horizon phases remain useful as future direction, but they are no longer the active near-term plan.
+
+## 10-Day MVP Sequence
+
+### Phase 12.1 - 10-Day MVP Roadmap Refresh
+
+Goal: Replace the broad roadmap emphasis with a focused 10-day MVP demo plan.
+
+Scope: Documentation only.
 
 Expected files/modules:
 
-- `CLAUDE.md`
 - `ROADMAP.md`
-- `docs/ARCHITECTURE.md`
-- `docs/AGENT_OPERATING_RULES.md`
-- `docs/DECISION_POLICY.md`
-- `docs/EVALS_AND_TESTING.md`
-- `docs/AZURE_MIGRATION_PLAN.md`
-- `docs/EVALS_AND_AGENT_TRAINING.md`
 - `docs/PHASE_PROMPTS.md`
+- `docs/ARCHITECTURE.md` if needed
+- `docs/AGENT_OPERATING_RULES.md` if needed
+- `docs/DECISION_POLICY.md` if needed
+- `docs/AZURE_MIGRATION_PLAN.md` if needed
+- `README.md` if needed
 
-Why it matters: Documentation prevents future agent work from drifting into unsafe decision-making or cloud coupling too early.
+Acceptance criteria:
 
-Constraints: Documentation only. Do not modify business logic, tests, or add real integrations.
+- The roadmap identifies the 10-day MVP as the active short-term plan.
+- Public and sandbox confidentiality boundaries are clear.
+- Deterministic final decision ownership is unchanged.
+- Deferred production work is explicit.
 
-## Phase 1 - Completed: Local Compliance Prototype
+### Phase 13.1 - Client Artifact Schemas
 
-Goal: Demonstrate a local compliance screening workflow.
-
-Purpose: Prove that deterministic Python can produce auditable acceptance decisions.
-
-Expected files/modules:
-
-- `app/run_full_planning.py`
-- `schemas/`
-- `services/`
-- `storage/`
-- `tests/`
-
-Why it matters: Establishes the initial compliance use case and smoke cases.
-
-Public cleanup note: Earlier agent-runtime prototype entrypoints were removed from the active repository after the deterministic service architecture became the source of truth.
-
-## Phase 2 - Completed: Azure-Ready Deterministic Architecture
-
-Goal: Move core decisions into strict schemas and deterministic services.
-
-Purpose: Make the project testable, auditable, and ready for future Azure Function boundaries.
+Goal: Add Pydantic schemas for normalized client artifacts.
 
 Expected files/modules:
 
-- `schemas/contracts.py`
-- `schemas/decisions.py`
-- `schemas/evidence.py`
-- `services/ingestion_service.py`
-- `services/screening_service.py`
-- `services/risk_scoring_service.py`
-- `services/acceptance_pipeline_service.py`
-- `manual_controls/acceptance_controls.py`
-- `orchestration/planning_orchestrator.py`
+- `schemas/client_artifacts.py`
+- `tests/test_client_artifact_schemas.py`
 
-Why it matters: Ensures the LLM is not the acceptance decision-maker.
+Required behavior:
 
-Constraints: Keep tools thin. Preserve fail-closed routing.
+- Represent normalized files, tables, text chunks, provenance, parser warnings, confidence, and sensitivity classification.
+- Allow synthetic local artifacts to be represented without implementing real parsing.
+- Preserve enough provenance for later evidence bundle use.
 
-## Phase 3 - Full Audit Planning Pipeline
+Constraints:
 
-Goal: Extend acceptance into audit planning.
+- No parsing implementation yet.
+- No PDF, Excel, OCR, network, or AI model calls.
+- Missing, ambiguous, weak, or sensitive fields must be representable for manual review routing.
 
-Purpose: Combine client acceptance, materiality, risk assessment, and audit response planning into one deterministic evidence bundle.
+### Phase 13.2 - CSV/JSON Normalization Service
 
-Expected files/modules:
-
-- `schemas/materiality.py`
-- `schemas/risk_assessment.py`
-- `schemas/audit_response.py`
-- `services/materiality_service.py`
-- `services/risk_assessment_service.py`
-- `services/audit_response_service.py`
-- `services/audit_planning_pipeline_service.py`
-- `services/planning_memo_service.py`
-- `storage/evidence_store.py`
-- `storage/memo_store.py`
-
-Why it matters: Moves the product from screening into audit planning support.
-
-Constraints: Final decisions still follow `REJECT > MANUAL_REVIEW > CONTINUE`.
-
-## Phase 4 - Source Registry and Source Scoring
-
-Goal: Add a structured source registry and deterministic source scoring.
-
-Purpose: Track where evidence came from and whether it is reliable enough to use.
+Goal: Deterministically normalize synthetic CSV/JSON client files into schema-valid JSON artifacts.
 
 Expected files/modules:
 
-- `schemas/source_registry.py`
-- `services/source_scoring_service.py`
-- `storage/source_registry_store.py`
-- `tests/test_source_scoring_service.py`
+- `services/client_artifact_normalization_service.py`
+- synthetic local fixtures if needed
+- `tests/test_client_artifact_normalization_service.py`
 
-Why it matters: Source quality becomes auditable instead of hidden inside agent output.
+Required behavior:
 
-Completed scope:
+- Normalize only synthetic CSV/JSON inputs.
+- Preserve provenance.
+- Flag malformed, missing, ambiguous, or weak data.
+- Classify sensitivity without exposing confidential content to public lanes.
 
-- Phase 4.1: source registry contracts and deterministic source scoring.
-- Phase 4.2: source registry integration with evidence bundles.
-- Phase 4.3: planning memo reporting from evidence bundle source support.
-- Phase 4.4: source registry documentation and operating rules.
+Constraints:
 
-Constraints: Unknown, unverified, stale, low-confidence, missing, or conflicting
-required source support must trigger `MANUAL_REVIEW`. Source scoring cannot
-produce `REJECT`; final decisions still follow
-`REJECT > MANUAL_REVIEW > CONTINUE`. Agents may assist with source metadata, but
-validated Python services score and decide. Planning memo source support is
-reporting-only.
+- No PDF parsing.
+- No Excel support.
+- No OCR.
+- No network calls.
+- No AI model calls.
 
-## Phase 5 - Financial Statement Processing Layer
+### Phase 14.1 - Sandbox Verifier Contract
 
-Goal: Add financial statement ingestion and normalization contracts.
-
-Purpose: Convert statement facts into validated data that deterministic planning services can consume.
+Goal: Define the offline/internal verifier schema and guardrails.
 
 Expected files/modules:
 
-- `schemas/financial_statements.py`
-- `services/statement_extraction_service.py`
-- `services/financial_normalization_service.py`
-- `tests/test_financial_normalization_service.py`
+- `schemas/sandbox_verifier.py`
+- `ai/prompts/sandbox_verifier.md` if useful for future mock behavior
+- `tests/test_sandbox_verifier_contracts.py`
 
-Why it matters: Audit planning needs reliable financial inputs for materiality and risk assessment.
+Required behavior:
 
-Constraints: No free-form extraction may enter the pipeline without schema validation and confidence handling.
+- Define structured verifier inputs and outputs.
+- Capture findings, contradictions, missing evidence, confidence, review reasons, and candidate public-search hints.
+- Validate that outputs do not include final decisions.
 
-## Phase 6 - Evidence Acquisition Agents
+Constraints:
 
-Goal: Add safe agent wrappers for source discovery and evidence extraction.
+- The verifier must not have internet access.
+- The verifier must not call cloud AI APIs.
+- The verifier must not decide final outcomes.
 
-Purpose: Let agents help find and structure evidence while deterministic services retain authority.
+### Phase 14.2 - Mock Sandbox Verifier
 
-Expected files/modules:
-
-- `ai/research_agent.py`
-- `ai/prompts/research_agent.md`
-- `schemas/research_agent.py`
-- `services/evidence_normalization_service.py`
-- `tests/test_research_agent_contracts.py`
-
-Why it matters: Agents can increase coverage without taking over compliance decisions.
-
-Constraints: No real API calls unless explicitly approved. Mock agents first.
-
-## Phase 7 - Auditor Assistant Agent
-
-Goal: Add an assistant that answers auditor questions from evidence bundles.
-
-Purpose: Improve review workflow while keeping the evidence bundle as the source of truth.
+Goal: Implement a deterministic local mock verifier.
 
 Expected files/modules:
 
-- `ai/auditor_assistant.py`
-- `ai/prompts/auditor_assistant.md`
-- `schemas/auditor_assistant.py`
-- `tests/test_auditor_assistant_guardrails.py`
+- `ai/sandbox_verifier.py` or a deterministic service if it affects pipeline behavior
+- `tests/test_mock_sandbox_verifier.py`
 
-Why it matters: Auditors need explanations, not opaque automation.
+Required behavior:
 
-Constraints: The assistant may explain and cite evidence, but may not change final decisions.
+- Read normalized client artifacts.
+- Produce findings, contradictions, missing evidence, confidence, review reasons, and safe public-search hints.
+- Keep outputs schema-valid.
 
-## Phase 8 - AI Memo Enhancement and Review Agent
+Constraints:
 
-Goal: Let an agent improve memo wording and flag quality issues.
+- No real model calls.
+- No internet access.
+- No final decisions.
 
-Purpose: Separate narrative quality from deterministic memo facts and decisions.
+### Phase 15.1 - Public Research Agent MVP
 
-Expected files/modules:
-
-- `ai/memo_enhancement_agent.py`
-- `ai/prompts/memo_enhancement.md`
-- `schemas/memo_enhancement.py`
-- `tests/test_memo_enhancement_agent.py`
-
-Why it matters: Better memos are useful, but only if the underlying facts remain controlled.
-
-Constraints: Enhanced memos must cite evidence bundle fields and require human review.
-
-## Phase 9 - Evals, Training Dataset, and Agent Reliability
-
-Goal: Build evaluation fixtures and reliability checks for agent behavior.
-
-Purpose: Improve agent predictability through prompts, schemas, tests, and golden outputs before considering model training.
+Goal: Add the public/global research lane for the MVP.
 
 Expected files/modules:
 
-- `tests/fixtures/`
-- `evals/`
-- `evals/golden_outputs/`
-- `tests/test_agent_guardrails.py`
-- `docs/EVALS_AND_AGENT_TRAINING.md`
+- `schemas/public_research.py`
+- `ai/public_research_agent.py` or deterministic mock provider
+- `tests/test_public_research_agent_mvp.py`
 
-Why it matters: Agent reliability must be measured, not assumed.
+Required behavior:
 
-Constraints: Do not fine-tune first. Start with architecture, prompts, structured outputs, and evals.
+- Receive only non-sensitive hints.
+- Use a mock/fixed provider first.
+- Produce public sources, citations, extracted public claims, confidence, contradictions, and review reasons.
+- Validate all outputs through Pydantic schemas.
 
-## Phase 10 - Azure-Ready Function Boundaries
+Constraints:
 
-Goal: Make local services map cleanly to Azure Functions.
+- Real internet search is deferred unless an explicit later mode is approved.
+- No sensitive client data may enter the public research lane.
+- No final decisions.
 
-Purpose: Prepare the codebase for cloud orchestration without migrating prematurely.
+### Phase 16.1 - Safe Hint Bridge
 
-Expected files/modules:
-
-- `azure_functions/README.md`
-- `azure_functions/function_boundaries.md`
-- service-level request and response schemas
-- integration tests around pipeline boundaries
-
-Why it matters: Clean boundaries reduce migration risk.
-
-Constraints: Do not add Azure SDKs, credentials, or deployment configuration yet.
-
-## Phase 11 - Azure Migration Prototype
-
-Goal: Design a minimal Azure prototype plan.
-
-Purpose: Identify the first Durable Functions workflow and storage mapping.
+Goal: Deterministically filter sandbox-produced hints before public research receives them.
 
 Expected files/modules:
 
-- `docs/AZURE_MIGRATION_PLAN.md`
-- `azure_functions/prototype_plan.md`
-- local adapter interfaces if needed
+- `services/safe_hint_bridge_service.py`
+- `schemas/public_research.py` or `schemas/safe_hints.py`
+- `tests/test_safe_hint_bridge_service.py`
 
-Why it matters: The migration should be incremental and reversible.
+Required behavior:
 
-Constraints: Planning only unless explicitly approved. No deployment.
+- Block confidential values, internal notes, uploaded document contents, private IDs, and sensitive client data.
+- Allow only safe public-search hints.
+- Record blocked hint reasons for auditability and manual review.
 
-## Phase 12 - UI / CLI Auditor Workflow
+Constraints:
 
-Goal: Provide a practical auditor workflow through CLI or UI.
+- Deterministic filtering only.
+- No agent may bypass the bridge.
+- No network calls.
 
-Purpose: Let auditors run planning, inspect evidence, review memos, and record override notes.
+### Phase 17.1 - Evidence Reconciliation MVP
 
-Expected files/modules:
-
-- `app/cli.py`
-- optional UI modules
-- `storage/audit_trail_store.py`
-- tests for review workflow
-
-Why it matters: A useful audit tool needs clear human interaction points.
-
-Constraints: The UI or CLI must not bypass deterministic services.
-
-## Phase 13 - Security, Audit Trail, and Production Hardening
-
-Goal: Harden the system for controlled production-like use.
-
-Purpose: Add audit trail, access controls, retention planning, and operational safeguards.
+Goal: Deterministically compare internal/client findings with public research findings.
 
 Expected files/modules:
 
-- audit trail schemas
-- storage retention policy docs
-- security review checklist
-- production readiness tests
+- `services/evidence_reconciliation_service.py`
+- `schemas/evidence_reconciliation.py`
+- `tests/test_evidence_reconciliation_service.py`
 
-Why it matters: Compliance systems need evidence of process integrity, not just outputs.
+Required behavior:
 
-Constraints: No secrets in the repo. No production credentials. Preserve human override traceability.
+- Compare sandbox/internal findings with public research findings.
+- Treat agreement as stronger support.
+- Route missing, weak, contradictory, stale, unclear, or low-confidence evidence to `MANUAL_REVIEW`.
+- Preserve reconciliation results in the evidence bundle.
+
+Constraints:
+
+- Agents do not decide.
+- Source scoring still cannot produce `REJECT`.
+- `REJECT` remains reserved for deterministic hard-stop criteria.
+
+### Phase 18.1 - Two-Agent Demo Runner
+
+Goal: Create an end-to-end synthetic demo runner.
+
+Expected files/modules:
+
+- local runner under `app/`
+- synthetic fixtures if needed
+- output examples if needed
+- `tests/test_two_agent_demo_runner.py` or focused integration coverage
+
+Required behavior:
+
+- Run normalization, sandbox verifier, hint bridge, public research provider, reconciliation, evidence bundle generation, and demo memo/report.
+- Produce JSON and Markdown outputs suitable for a teacher demo.
+- Use synthetic data only.
+
+Constraints:
+
+- Local-first execution.
+- No network calls.
+- No real model calls.
+- No production credentials or cloud resources.
+
+### Phase 19.1 - Demo Documentation and Presentation Polish
+
+Goal: Document how to run and explain the MVP demo.
+
+Expected files/modules:
+
+- `README.md`
+- `docs/` demo notes if needed
+
+Required behavior:
+
+- Add demo command.
+- Add expected outputs.
+- Explain security boundaries.
+- Explain "Python decides. Agents assist."
+- State clearly that the MVP is a demonstrable architecture and deterministic pipeline demo, not a production system.
+
+Constraints:
+
+- Documentation only unless a small runner command reference needs alignment with completed Phase 18.1 code.
+
+## Deferred Work
+
+The following remain deferred until explicitly approved:
+
+- Azure implementation
+- Durable Functions code
+- deployment templates
+- OCR
+- scanned PDF support
+- full Excel support
+- GraphRAG/vector search
+- real local model runtime
+- real cloud model runtime
+- real auditor assistant runtime
+- real memo enhancement runtime
+- production sandbox VM hardening
+- full human review UI
+- production security hardening
+
+## Non-Goals for the MVP
+
+- production deployment
+- production security certification
+- real client data processing
+- real internet research by default
+- real cloud AI calls
+- real OpenAI API calls
+- CrewAI runtime integration
+- replacing human auditor judgment
+
+## Azure Path
+
+The MVP remains local-first. The same deterministic services can later be wrapped for a private server or Azure Functions, but Azure wrappers must not own business logic. Do not add Azure SDKs, credentials, deployment templates, cloud resources, or real cloud calls during the MVP phases.

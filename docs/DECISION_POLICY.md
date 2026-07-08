@@ -38,6 +38,9 @@ Route to `MANUAL_REVIEW` when:
 - evidence is contradictory
 - extraction confidence is low
 - required source support is missing, stale, low-confidence, contradictory, unverified, or weak
+- public evidence and internal/client evidence are missing, weak, contradictory, stale, unclear, or low-confidence after reconciliation
+- sandbox verifier or public research output fails Pydantic validation
+- safe hint filtering blocks required search context and leaves evidence unsupported
 - client data is unknown or incomplete
 - engagement risk is high but not automatically rejecting
 - materiality inputs are unusual or unsupported
@@ -46,7 +49,7 @@ Route to `MANUAL_REVIEW` when:
 - an agent output fails schema validation
 - a tool fails or returns unusable data
 
-Manual review is the correct outcome for uncertainty.
+Manual review is required when uncertainty affects the conclusion.
 
 ## CONTINUE Criteria
 
@@ -65,13 +68,7 @@ Route to `CONTINUE` only when:
 
 The system must fail closed. If the pipeline cannot establish reliable support for a clean outcome, it must route to `MANUAL_REVIEW` or `REJECT`, depending on the condition.
 
-Examples:
-
-- Missing source data -> `MANUAL_REVIEW`
-- Invalid agent output -> `MANUAL_REVIEW`
-- Tool error during a required check -> `MANUAL_REVIEW`
-- Confirmed independence conflict -> `REJECT`
-- Confirmed sanctions hit -> `REJECT`
+Examples include missing source data, invalid agent output, or a tool error during a required check routing to `MANUAL_REVIEW`; confirmed independence conflicts or sanctions hits route to `REJECT`.
 
 ## Source Scoring Policy
 
@@ -98,6 +95,18 @@ REJECT > MANUAL_REVIEW > CONTINUE
 Missing evidence must be recorded in the evidence bundle and should create a manual review reason when it affects the conclusion.
 
 The system must not fill gaps with agent assumptions.
+
+## MVP Reconciliation Policy
+
+The MVP reconciliation service must be deterministic. It compares offline/internal findings from local normalized client artifacts with public research findings from non-sensitive hints. Agreements may strengthen support, but agents cannot resolve contradictions or decide final outcomes.
+
+Missing, weak, contradictory, stale, unclear, low-confidence, or schema-invalid evidence must route to `MANUAL_REVIEW`. Source scoring and reconciliation cannot produce `REJECT`; rejection remains reserved for deterministic hard-stop criteria.
+
+## Confidentiality Policy
+
+Sensitive client data must stay local or inside an approved isolated sandbox. It must not be sent to OpenAI servers, public search providers, cloud AI APIs, or internet-connected tools.
+
+Public research may receive only non-sensitive hints such as company name, official website, public annual report targets, regulator sources, sanctions-list targets, and reliable-news targets. The offline sandbox/internal lane works only with local normalized client artifacts. Sandbox and public research outputs must validate through Pydantic schemas before deterministic services may use them.
 
 ## Contradictory Evidence Policy
 
