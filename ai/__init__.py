@@ -19,6 +19,11 @@ from ai.memo_enhancement_agent import (
     enhance_memo,
     review_memo_enhancement_response,
 )
+from ai.public_research_agent import (
+    PublicResearchAgent,
+    PublicResearchScenario,
+    run_public_research_mvp,
+)
 
 __all__ = [
     "AuditorAssistant",
@@ -27,6 +32,8 @@ __all__ = [
     "MockResearchScenario",
     "MockSandboxVerifier",
     "MockSandboxVerifierScenario",
+    "PublicResearchAgent",
+    "PublicResearchScenario",
     "answer_auditor_question",
     "enhance_memo",
     "get_mock_research_agent_output",
@@ -34,4 +41,5 @@ __all__ = [
     "review_memo_enhancement_response",
     "review_auditor_assistant_response",
     "run_mock_sandbox_verifier",
+    "run_public_research_mvp",
 ]
