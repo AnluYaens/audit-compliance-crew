@@ -96,11 +96,26 @@ Missing evidence must be recorded in the evidence bundle and should create a man
 
 The system must not fill gaps with agent assumptions.
 
-## MVP Reconciliation Policy
+## MVP Evidence-Reconciliation Policy
 
-The MVP reconciliation service must be deterministic. It compares offline/internal findings from local normalized client artifacts with public research findings from non-sensitive hints. Agreements may strengthen support, but agents cannot resolve contradictions or decide final outcomes.
+The MVP reconciliation service is deterministic. It compares offline/internal
+findings from local normalized client artifacts with mock public research
+findings derived from non-sensitive hints. Agreements may strengthen evidence
+support, but agents cannot resolve contradictions or decide final outcomes.
 
-Missing, weak, contradictory, stale, unclear, low-confidence, or schema-invalid evidence must route to `MANUAL_REVIEW`. Source scoring and reconciliation cannot produce `REJECT`; rejection remains reserved for deterministic hard-stop criteria.
+The teacher-facing demo produces an `EvidenceReconciliationStatus` and a
+`human_review_required` signal. Missing, weak, contradictory, stale, unclear,
+low-confidence, schema-invalid, or source-error evidence must set the
+appropriate review signal. These values are not final compliance decisions:
+
+- `aligned` does not mean `CONTINUE`
+- `human_review_required` does not independently assign `MANUAL_REVIEW`
+- reconciliation cannot produce `REJECT`
+
+If a decision-producing workflow later consumes a validated reconciliation
+result, deterministic policy must prevent a clean outcome while a review signal
+is present. Hard rejection remains reserved for separate deterministic
+hard-stop criteria.
 
 ## Confidentiality Policy
 

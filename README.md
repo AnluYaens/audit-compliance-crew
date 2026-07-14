@@ -1,241 +1,197 @@
 # Audit Compliance Crew
 
-Audit Compliance Crew is a deterministic-first audit planning and compliance
-prototype. The active short-term plan is a 10-day MVP demo using synthetic data.
-It shows how Python services, schemas, fixtures, and tests can own compliance
-routing while agent-like lanes assist with research, local verification, and
-memo/report support.
+Audit Compliance Crew is a deterministic-first, agent-assisted demonstration of
+an audit evidence workflow. It shows how structured assistance can support
+evidence discovery and review while deterministic Python owns validation and
+decision logic.
 
-## Core Principle
+The working local MVP focuses on evidence quality, confidentiality boundaries,
+and conservative human-review signalling. It is decision-support software, not
+an autonomous auditor, and it is not production-ready.
 
-**Python decides. Agents assist.**
-
-Final compliance outcomes come from deterministic Python logic. Agents may draft
-narratives, summarize structured findings, or prepare research inputs, but they
-do not decide whether an engagement should `CONTINUE`, move to
-`MANUAL_REVIEW`, or be `REJECT`.
-
-## Key Features
-
-- Deterministic compliance routing for synthetic audit planning scenarios.
-- Explicit final outcomes: `CONTINUE`, `MANUAL_REVIEW`, and `REJECT`.
-- Schema-validated inputs and outputs for pipeline-changing data.
-- Fail-closed handling that routes uncertain or incomplete cases to manual
-  review.
-- Synthetic CRM, holdings, control, and evidence fixtures for repeatable demos.
-- Evidence bundle outputs that preserve decision reasons for auditability.
-- Planned MVP lanes for public research with non-sensitive hints and offline
-  verification with local artifacts.
-- Planned safe hint bridge to keep confidential client data out of public
-  research and internet-connected tools.
-- Focused service boundaries for decisions, storage, orchestration, AI support,
-  and manual controls.
-- Test coverage for deterministic rules, schema contracts, orchestration paths,
-  and safety-oriented edge cases.
-
-## Architecture Overview
-
-The project is organized around a deterministic core with optional AI-assist
-surfaces around it.
+## Core Governance Rule
 
 ```text
-Company input
-    |
-Deterministic ingestion service
-    |
-Independence and sanctions screening services
-    |
-Source registry and deterministic source scoring
-    |
-Deterministic risk scoring service
-    |
-Acceptance pipeline service
-    |
-Evidence bundle
-    |
-Final decision: CONTINUE / MANUAL_REVIEW / REJECT
+Python decides. Agents assist.
 ```
 
-- `schemas/` defines structured contracts used by the pipeline.
-- `services/` contains deterministic compliance and decision-support logic.
-- `storage/` contains local persistence helpers for demo data.
-- `orchestration/` coordinates the pipeline without handing final decisions to
-  agents.
-- `ai/` contains AI-facing helper code for explanatory or drafting workflows.
-- `manual_controls/` contains manual-review-oriented controls and examples.
-- `data/` and `tests/fixtures/` contain synthetic demo data only.
-- `tests/` validates deterministic behavior and contract boundaries.
+- Agents may discover, extract, summarize, and draft.
+- Agents do not determine `CONTINUE`, `MANUAL_REVIEW`, or `REJECT` outcomes.
+- Pipeline-affecting outputs must pass Pydantic validation before deterministic
+  services can use them.
+- Missing, contradictory, low-confidence, or unverified evidence fails closed
+  to human review.
+- The evidence bundle remains the source of truth in decision-producing
+  workflows.
 
-## Deterministic Decision Rules
+The teacher-facing two-agent demo is intentionally non-decisional: it reports
+evidence-reconciliation status and a `human_review_required` signal, not a final
+compliance outcome.
 
-The compliance pipeline is designed so that deterministic rules own final
-routing:
-
-| Scenario | Final Decision |
-| --- | --- |
-| Independence conflict | `REJECT` |
-| Sanctions hit | `REJECT` |
-| Unknown or missing client data | `MANUAL_REVIEW` |
-| Missing, stale, contradictory, unverified, or weak required source support | `MANUAL_REVIEW` |
-| High engagement risk | `MANUAL_REVIEW` |
-| Clean screening with low or moderate risk | `CONTINUE` |
-
-Additional safeguards:
-
-- `CONTINUE` is allowed only when required checks pass and no blocking issue is
-  present.
-- `MANUAL_REVIEW` is used when a case is uncertain, incomplete, ambiguous, or
-  requires human judgment.
-- `REJECT` is used when deterministic blocking criteria are met.
-- Missing, malformed, or schema-invalid pipeline-changing data must not be
-  silently accepted.
-- AI-generated content can explain or draft, but cannot override deterministic
-  decision logic.
-
-## AI Governance
-
-Audit Compliance Crew treats LLMs and agents as assistants, not authorities. Any
-AI output that could affect the pipeline must validate through schemas before it
-is used, and uncertainty fails closed to `MANUAL_REVIEW`.
-
-Sensitive client data stays local or inside an approved isolated sandbox. Public
-research may receive only non-sensitive hints, such as company name, official
-website, annual report targets, regulator sources, sanctions-list targets, and
-reliable-news targets. Sensitive client data must not be sent to OpenAI servers,
-public search providers, cloud AI APIs, or internet-connected tools.
-
-## 10-Day MVP Direction
-
-The MVP is an architecture and deterministic pipeline demo, not a production
-system. It is expected to show:
-
-- synthetic CSV/JSON client artifact normalization
-- offline sandbox/internal verification over local artifacts
-- safe public-search hint filtering
-- public research through a mock or fixed provider
-- deterministic reconciliation of public and internal evidence
-- evidence bundle generation
-- JSON and Markdown demo outputs for review
-
-Deferred work includes Azure implementation, Durable Functions code, deployment
-templates, OCR, scanned PDF support, full Excel support, GraphRAG/vector search,
-real model runtimes, production sandbox hardening, full human review UI, and
-production security hardening.
-
-## Tech Stack
-
-- Python 3
-- Pytest
-- Pydantic-style schema validation
-- Local JSON and CSV demo fixtures
-- Deterministic service modules
-- Standard-library compile checks
-- Optional AI-assist integration points
-
-## Install And Run Locally
-
-Create and activate a virtual environment:
-
-```bash
-python -m venv .venv
-source .venv/bin/activate
-```
-
-Install project dependencies:
-
-```bash
-.venv/bin/python -m pip install -r requirements.txt
-```
-
-Run the local runner:
-
-```bash
-.venv/bin/python -m app.local_runner
-```
-
-Run the deterministic acceptance pipeline manually:
-
-```bash
-.venv/bin/python - <<'PY'
-from services.acceptance_pipeline_service import run_acceptance_pipeline
-
-for company in [
-    "Quantum Cybernetics",
-    "Vanguard Mining Corp",
-    "Apex Energy Group",
-    "GreenLeaf Organics",
-    "Unknown Company ABC",
-]:
-    bundle = run_acceptance_pipeline(company)
-    print(company, "=>", bundle.final_decision)
-    print("Reasons:", bundle.manual_review_reasons)
-    print()
-PY
-```
-
-Expected demo behavior:
+## Working MVP Flow
 
 ```text
-Quantum Cybernetics => FinalDecision.REJECT
-Vanguard Mining Corp => FinalDecision.REJECT
-Apex Energy Group => FinalDecision.MANUAL_REVIEW
-GreenLeaf Organics => FinalDecision.CONTINUE
-Unknown Company ABC => FinalDecision.MANUAL_REVIEW
+Synthetic client CSV/JSON
+-> deterministic normalization
+-> deterministic mock offline sandbox verifier
+-> deterministic Safe Hint Bridge
+-> deterministic mock public research agent
+-> deterministic evidence reconciliation
+-> human-review signal
 ```
 
-## Run Tests
+The default CLI run creates a temporary synthetic CSV, passes each stage's
+schema-validated output to the next stage, and prints a concise summary. It does
+not call the internet, a model provider, a virtual machine, or Azure.
 
-Run the test suite:
+## Confidentiality Boundary
+
+The demo separates a local/internal artifact lane from a public-research lane.
+
+- The local lane may contain confidential-classified synthetic values and
+  retains artifact provenance for internal verification.
+- The Safe Hint Bridge accepts only approved public or non-sensitive hint types
+  that meet deterministic safety and confidence rules.
+- Approved hints are copied without local provenance before public research
+  receives them.
+- Raw local values, filenames, source identifiers, and provenance do not cross
+  the bridge.
+- Review-required sandbox results produce no approved public hints.
+- All current data is synthetic. The repository contains no real client data.
+
+## Quick Start
+
+Run these commands from the repository root.
+
+Python 3 is required. Create a local virtual environment and install the
+development dependencies:
 
 ```bash
-.venv/bin/python -m pytest tests
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements-dev.txt
 ```
 
-Run compile checks:
+Run the full test suite:
 
 ```bash
-.venv/bin/python -m compileall schemas services storage orchestration ai tests
+.venv/bin/python -m pytest tests -s
 ```
 
-Current validation:
+Run the clean demo:
+
+```bash
+.venv/bin/python -m app.run_two_agent_demo
+```
+
+Run the review-required demo:
+
+```bash
+.venv/bin/python -m app.run_two_agent_demo --scenario review
+```
+
+Other supported scenarios target a specific evidence-quality condition:
 
 ```text
-87 passed
+sandbox-contradiction
+sandbox-missing-evidence
+public-weak
+public-stale
+public-error
 ```
 
-## Azure And Deployment Notes
+For example:
 
-This repository does not include production credentials, live cloud resources,
-deployment files, or a real Azure deployment. Azure notes are future-oriented
-architecture planning only.
+```bash
+.venv/bin/python -m app.run_two_agent_demo --scenario public-weak
+```
 
-Future-oriented mapping:
+An optional positional path may point to a synthetic CSV or JSON artifact:
 
-| Local Module | Possible Future Azure Equivalent |
-| --- | --- |
-| `services/ingestion_service.py` | Azure Function activity |
-| `services/screening_service.py` | Azure Function activity |
-| `services/risk_scoring_service.py` | Azure Function activity |
-| `services/acceptance_pipeline_service.py` | Durable Functions orchestrator or activity chain |
-| `schemas/contracts.py` | Shared function contracts |
-| `storage/` | Evidence ledger storage |
-| `ai/` | AI-assisted reporting layer |
+```bash
+.venv/bin/python -m app.run_two_agent_demo path/to/synthetic-input.json
+```
 
-## Public Safety Notes
+## Interpreting the Demo
 
-This project is a public portfolio prototype built with synthetic demo data.
+| Scenario | Reconciliation status    | Human review required | Meaning                                                                                                          |
+| -------- | ------------------------ | --------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `clean`  | `aligned`                | `no`                  | The deterministic mocks produced mutually aligned, schema-valid evidence.                                        |
+| `review` | `contradictory_evidence` | `yes`                 | The local verifier raised a contradiction, the bridge approved no hints, and the issue was preserved for review. |
 
-- Synthetic demo data only.
-- No real client data.
-- No production credentials.
-- No proprietary audit manual content.
-- Not an official audit firm product.
-- Not professional, legal, audit, assurance, compliance, or regulatory advice.
+The CLI also reports the status and item count for normalization, sandbox
+verification, the Safe Hint Bridge, and public research. In the review scenario,
+`Safe Hint Bridge: no_approved_hints` means the filtering stage ran but released
+nothing to the public lane.
+
+These labels describe evidence processing and reconciliation only:
+
+- `aligned` is not a `CONTINUE` decision.
+- `human_review_required: yes` is a review signal, not an independently assigned
+  `MANUAL_REVIEW` outcome.
+- Reconciliation never produces `REJECT`.
+
+Final compliance outcomes, where used elsewhere in the project, remain owned by
+separate deterministic services and follow:
+
+```text
+REJECT > MANUAL_REVIEW > CONTINUE
+```
+
+See [docs/DEMO_GUIDE.md](docs/DEMO_GUIDE.md) for a short presentation script,
+stage explanations, and troubleshooting.
+
+## Current Limitations
+
+- Public research is deterministic and mocked; it performs no real internet
+  search.
+- The sandbox verifier is deterministic and mocked; it provides no real VM or
+  operating-system isolation.
+- There is no LLM or agent-framework runtime.
+- There is no OpenAI API, CrewAI runtime, or other model-provider integration.
+- There is no Azure deployment, Azure SDK, or cloud resource.
+- Artifact normalization supports CSV and JSON only for this MVP.
+- There is no OCR, PDF parsing, or Excel parsing.
+- The project uses synthetic data only.
+- The MVP is not a production security design and does not replace auditor
+  judgment, professional standards, or human review.
+
+## Repository Structure
+
+- `schemas/`: strict Pydantic contracts for inputs, evidence, reconciliation,
+  and deterministic decisions.
+- `services/`: deterministic business logic, including normalization, hint
+  filtering, reconciliation, screening, materiality, and planning services.
+- `ai/`: schema-constrained assistant wrappers and deterministic mock agents;
+  no live model runtime.
+- `orchestration/`: local workflow composition, including the two-agent demo.
+- `app/`: command-line entry points.
+- `storage/`: local evidence, memo, and source-registry persistence helpers.
+- `manual_controls/`: public-safe deterministic demo controls.
+- `data/`: tracked synthetic datasets for local demonstrations.
+- `tests/` and `evals/`: deterministic tests, fixtures, and small golden assets.
+- `docs/`: architecture, policy, demo, evaluation, and future migration notes.
+- `azure_functions/`: documentation and local contract preparation only; no
+  Azure implementation.
+- `output/` and `memos/`: ignored destinations for local generated artifacts;
+  only empty directory placeholders are tracked.
+
+## Additional Documentation
+
+- [Demo guide](docs/DEMO_GUIDE.md)
+- [Architecture](docs/ARCHITECTURE.md)
+- [Decision policy](docs/DECISION_POLICY.md)
+- [Agent operating rules](docs/AGENT_OPERATING_RULES.md)
+- [Azure migration plan](docs/AZURE_MIGRATION_PLAN.md)
+- [Public project roadmap](ROADMAP.md)
+
+## Safety and Scope
+
+This repository is a public portfolio and academic-review prototype. It contains
+synthetic examples, no production credentials, and no proprietary audit-manual
+content. It is not professional audit, assurance, legal, compliance, or
+regulatory advice.
 
 ## License
 
-This project is proprietary and source-available for portfolio/review purposes only.
-
-No permission is granted to use, copy, modify, distribute, sell, host, deploy, train on, or create derivative works from this software without prior written permission from the copyright holder.
-
-See [LICENSE](LICENSE) for details.
+This project is proprietary and source-available for portfolio and review
+purposes only. See [LICENSE](LICENSE) for the full terms.

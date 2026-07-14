@@ -1,187 +1,191 @@
 # Architecture
 
-Audit Compliance Crew uses a deterministic-first architecture for audit planning and compliance.
+Audit Compliance Crew uses a deterministic-first architecture for audit planning
+and evidence review.
 
 ```text
 Python decides. Agents assist.
 ```
 
-Agents may help discover, extract, summarize, review, and draft. Deterministic Python services own validation, routing, and final decisions.
+Agents may discover, extract, summarize, review, and draft. Deterministic Python
+owns schema validation, evidence policy, routing, and final compliance decisions.
 
-## MVP Architecture Vision
+## Implemented Two-Agent Evidence Demo
 
-The active short-term plan is a 10-day MVP demo. It is local-first, uses synthetic data, and is not a production system. The MVP adds two assisted lanes around the deterministic core:
+The teacher-facing MVP is a local, synthetic-data workflow:
 
 ```text
-Synthetic client artifacts
--> deterministic CSV/JSON normalization
--> offline sandbox/internal verifier
--> safe hint bridge
--> public/global research provider using non-sensitive hints
+Synthetic client CSV/JSON
+-> deterministic normalization
+-> deterministic mock offline sandbox verifier
+-> deterministic Safe Hint Bridge
+-> deterministic mock public research agent
 -> deterministic evidence reconciliation
+-> human-review signal
+```
+
+The demo returns validated stage objects in memory and prints a concise CLI
+summary. It does not generate a final compliance decision, planning memo, or
+saved evidence bundle. Its `EvidenceReconciliationStatus` and
+`human_review_required` values describe evidence quality only.
+
+The “sandbox” verifier is a deterministic mock contract implementation, not a
+real VM or operating-system sandbox. The public research agent is a
+deterministic fixed provider and performs no internet search. No LLM runtime is
+present.
+
+## Confidentiality Boundary
+
+The implemented workflow separates two lanes:
+
+```text
+Local/internal lane
+  normalized synthetic values
+  local source metadata and provenance
+              |
+              v
+Deterministic Safe Hint Bridge
+  type, sensitivity, confidence, review,
+  unsafe-marker, and status checks
+  approved copies receive provenance=None
+              |
+              v
+Mock public-research lane
+  public-safe hint text only
+```
+
+A sandbox output must be successful and must not require human review before the
+bridge will consider its hints. The bridge rejects unsafe or weak candidates and
+removes provenance from approved copies. Raw local values, filenames, source
+identifiers, and provenance do not cross into the public-research input.
+
+This is a tested application boundary for synthetic data, not a production DLP,
+network-isolation, or sandbox-hardening claim.
+
+## Broader Deterministic Planning Pipeline
+
+The repository also contains a separate deterministic planning foundation:
+
+```text
+Company and structured planning input
+-> deterministic ingestion and screening
+-> deterministic source scoring
+-> materiality calculation
+-> structured risk assessment
+-> audit response planning
 -> evidence bundle
 -> deterministic final decision
--> demo memo/report and auditor review
+-> planning memo and auditor review
 ```
 
-The public research lane may use mock or fixed public evidence. Real internet search is deferred unless a later mode explicitly approves it. The offline sandbox/internal lane works only with local normalized artifacts and must not have internet access or call cloud AI APIs.
-
-## Long-Term Architecture Vision
-
-```text
-Source discovery
--> source scoring
--> document extraction
--> evidence normalization
--> deterministic audit planning
--> evidence bundle
--> memo generation
--> auditor assistant
--> Azure orchestration
-```
-
-## Current Module Responsibilities
-
-- `schemas/`: Pydantic contracts for decisions, evidence bundles, materiality, risk assessment, audit response, and future agent outputs.
-- `services/`: deterministic business logic. This is where compliance and audit planning decisions live.
-- `manual_controls/`: synthetic demo control metadata used to exercise deterministic planning logic without proprietary manual content.
-- `tools/`: thin wrappers only. Tools call services; they do not contain business logic.
-- `storage/`: evidence and memo persistence.
-- `orchestration/`: workflow coordination for local runs and future Durable Functions migration.
-- `ai/`: future safe agent wrappers and prompts.
-- `app/`: local runner entry points.
-- `tests/`: pytest coverage for services, pipelines, storage, and guardrails.
-
-## MVP Confidentiality Boundaries
-
-Sensitive client data stays local or inside an approved isolated sandbox and must not be sent to OpenAI servers, public search providers, cloud AI APIs, or internet-connected tools.
-
-Public research may receive only non-sensitive hints, such as company name, official website, public annual report targets, regulator sources, sanctions-list targets, and reliable-news targets. Offline sandbox/internal verification works only with local normalized client artifacts.
-
-Sandbox and public research outputs must validate through Pydantic schemas before deterministic services consume them. No agent may emit or override `CONTINUE`, `MANUAL_REVIEW`, or `REJECT`.
-
-## Deterministic Data Flow
-
-```text
-Company name and planning inputs
--> schemas validate requests
--> ingestion service builds known client facts
--> screening service checks independence and sanctions facts
--> risk scoring service evaluates engagement risk
--> acceptance pipeline service produces an evidence bundle
--> source registry records provenance
--> source scoring service evaluates source support
--> materiality service calculates planning materiality
--> risk assessment service assesses account/assertion risks
--> audit response service designs deterministic responses
--> full planning pipeline combines decisions by priority
--> storage persists evidence and memo artifacts
-```
-
-Decision priority is always:
+That broader path can assign `CONTINUE`, `MANUAL_REVIEW`, or `REJECT`.
+It is separate from the two-agent evidence demo. Decision priority is always:
 
 ```text
 REJECT > MANUAL_REVIEW > CONTINUE
 ```
 
-`CONTINUE` is allowed only when every relevant deterministic module can continue.
+`CONTINUE` is available only when every relevant deterministic module has
+sufficient validated support.
+
+## Module Responsibilities
+
+- `schemas/`: strict Pydantic contracts for artifacts, agent outputs, evidence,
+  reconciliation, planning inputs, and decisions.
+- `services/`: deterministic normalization, filtering, reconciliation,
+  screening, scoring, materiality, planning, and memo logic.
+- `ai/`: schema-constrained wrappers and deterministic mock providers; no live
+  model or agent-framework runtime.
+- `orchestration/`: local workflow coordination, including the two-agent demo
+  and broader planning composition.
+- `storage/`: local evidence, memo, and source-registry persistence.
+- `manual_controls/`: public-safe synthetic control metadata.
+- `app/`: local command entry points.
+- `tests/`: unit, integration, contract, guardrail, and CLI coverage.
+- `azure_functions/`: future boundary documentation only; no Azure runtime.
+- `tools/`: thin interface boundary reserved for wrappers, not business logic.
+
+## Validation and Decision Ownership
+
+Pipeline-affecting assisted output follows:
+
+```text
+schema-constrained output
+-> Pydantic validation
+-> deterministic service
+-> evidence record or reconciliation result
+-> deterministic routing where applicable
+-> auditor review
+```
+
+Agents cannot emit or override final decision fields. Invalid or uncertain
+outputs cannot be silently treated as clean support.
 
 ## Evidence Bundle as Source of Truth
 
-The evidence bundle is the controlled record for the pipeline. It contains:
+For decision-producing workflows, the evidence bundle is the controlled record.
+It can contain:
 
-- run metadata
-- target company
+- run metadata and target company
 - evaluated controls
-- evidence data
-- missing evidence
-- tool errors
-- AI output records
-- final decision
-- manual review reasons
+- evidence and provenance
+- missing evidence and tool errors
+- validated AI-output records
+- source records and deterministic source-scoring results
+- final decision and manual-review reasons
 
-Agents, memos, UI screens, and future Azure steps must read from validated evidence bundles, not unsupported free-form text.
+Memos, assistants, and future user interfaces must report from validated
+evidence bundles rather than inventing facts or changing conclusions. The
+two-agent demo does not currently persist its reconciliation result into this
+bundle; it is a focused evidence-boundary demonstration.
 
-Source support is also recorded in the evidence bundle. A bundle may carry
-`SourceRecord` entries, a `SourceRegistryScoringResult`, and whether source
-support was required for the workflow. The planning memo reports this section
-from the bundle only; it does not create evidence, change source scores, or
-override decisions.
+## Deterministic Source Support
 
-## Future Agentic Architecture
+Source scoring evaluates structured source metadata for authority, relevance,
+freshness, completeness, confidence, verification, and contradictions. Required
+support that is missing, stale, weak, low-confidence, contradictory, or
+unverified fails closed to `MANUAL_REVIEW`.
 
-Future agents can sit around the deterministic core:
+Source scoring cannot return `REJECT`. Rejection remains reserved for separate
+deterministic hard-stop criteria such as confirmed independence conflicts or
+sanctions hits.
 
-- Research agents discover candidate sources.
-- Source ranking agents propose source quality metadata.
-- Deep evidence agents extract structured facts.
-- Statement processing agents extract financial statement data.
-- Memo agents improve narrative wording.
-- Auditor assistant agents answer questions from evidence bundles.
-- Quality review agents flag inconsistencies or missing support.
+## Assistant Boundaries
 
-All agent output that affects the pipeline must validate through Pydantic schemas before a service may consume it.
+Current demo assistants are deterministic mocks:
 
-For the MVP, agent-like behavior should be mock or deterministic first. Public research and sandbox verification may assist with structured findings, citations, confidence, contradictions, missing evidence, review reasons, and public-search hints. They do not decide final outcomes.
+- the sandbox verifier proposes structured internal findings and candidate
+  public hints
+- the public research wrapper proposes fixed public-style sources and extracted
+  evidence
+- the Safe Hint Bridge and reconciliation service are deterministic Python, not
+  agent discretion
 
-## Source Discovery Flow
+Future research, extraction, memo, auditor-assistant, or quality-review
+capabilities may be introduced only behind stable schemas and deterministic
+services. Planned capability must not be treated as currently implemented.
 
-```text
-Research Scout Agent
--> candidate source records
--> Pydantic validation
--> source registry
--> deterministic source scoring
--> continue or manual-review source status
-```
+## Local-to-Azure Direction
 
-`SourceRecord` captures source identity, type, publisher, retrieval date,
-freshness threshold, confidence, relevance, notes, and contradiction flags.
-`SourceRegistry` groups records for one run and company.
+Azure is not implemented. If a later migration is approved, thin adapters can
+wrap existing local services without moving business logic:
 
-Source scoring is deterministic and considers authority, relevance, freshness,
-completeness, confidence, and contradictions. Missing identity, stale metadata,
-low confidence, low relevance, weak authority, contradiction flags, unverified
-metadata, or an empty registry fail closed to `MANUAL_REVIEW` when source support
-is required.
+| Local authority | Possible future Azure role |
+| --- | --- |
+| `services/ingestion_service.py` | Function activity |
+| `services/source_scoring_service.py` | Function activity |
+| `services/financial_normalization_service.py` | Function activity |
+| `services/materiality_service.py` | Function activity |
+| `services/risk_assessment_service.py` | Function activity |
+| `services/audit_response_service.py` | Function activity |
+| `services/audit_planning_pipeline_service.py` | Durable orchestration boundary |
+| `storage/` | Evidence-ledger adapter |
+| `ai/` | Optional schema-constrained assistance layer |
 
-Source scoring cannot return `REJECT`. Rejection remains reserved for hard-stop
-deterministic criteria, and combined pipeline decisions still follow:
+No Azure SDK, credential, deployment template, or cloud resource is present.
 
-```text
-REJECT > MANUAL_REVIEW > CONTINUE
-```
+## Current Technical Limits
 
-For source-support-required workflows, missing or weak source scoring prevents
-`CONTINUE`. For optional workflows, source metadata may be reported for auditor
-visibility without becoming a decision override. Agents may discover, extract,
-and summarize source metadata, but validated Python services score and decide.
-
-## Statement Processing Flow
-
-```text
-Document input
--> extraction attempt
--> financial statement schema validation
--> confidence and completeness checks
--> normalization service
--> deterministic materiality and risk services
-```
-
-Low-confidence extraction, missing statement sections, or contradictory financial facts cannot become a clean planning input.
-
-## Local-to-Azure Mapping
-
-The current local services should map to Azure without changing decision ownership:
-
-- `services/ingestion_service.py` -> Azure Function activity
-- `services/source_scoring_service.py` -> Azure Function activity
-- `services/statement_extraction_service.py` -> Azure Function activity
-- `services/materiality_service.py` -> Azure Function activity
-- `services/risk_assessment_service.py` -> Azure Function activity
-- `services/audit_response_service.py` -> Azure Function activity
-- `services/audit_planning_pipeline_service.py` -> Durable Functions orchestrator
-- `storage/` -> evidence ledger storage
-- `ai/` -> Azure AI Foundry agent layer
-
-Do not add Azure SDKs, credentials, or deployment resources until an explicit migration phase begins.
+The MVP supports synthetic CSV/JSON normalization only. It has no OCR, PDF or
+Excel parser, real browsing, network call, model runtime, agent framework, VM
+isolation, cloud deployment, production security controls, or real client data.

@@ -203,6 +203,7 @@ def test_cli_summary_excludes_confidential_and_local_sandbox_details(
     output = capsys.readouterr().out
 
     assert "Two-Agent Evidence Demo" in output
+    assert "Safe Hint Bridge: complete (approved_hints=5)" in output
     assert "Evidence reconciliation: aligned" in output
     assert "Human review required: no" in output
 
@@ -236,6 +237,7 @@ def test_result_and_cli_have_no_compliance_outcome_fields_or_values(
 
     cli_main(["--scenario", "review"])
     output = capsys.readouterr().out
+    assert "Safe Hint Bridge: no_approved_hints (approved_hints=0)" in output
     assert "Human review required: yes" in output
     assert "final_decision" not in output.casefold()
     assert "decision" not in output.casefold()

@@ -1,10 +1,12 @@
 # Azure Migration Plan
 
-Audit Compliance Crew is local-first today and Azure-ready by design. Any migration must preserve deterministic decision ownership.
+Audit Compliance Crew is local-first today. Its synthetic two-agent evidence
+demo and deterministic planning services run without Azure. Any future migration
+must preserve deterministic decision ownership.
 
-Do not add Azure SDKs, credentials, deployment templates, cloud resources, or deployments yet.
-
-The active 10-day MVP is local-first and synthetic-data only. Azure implementation and Durable Functions code are deferred. MVP services should remain easy to wrap later, but business logic must stay in deterministic local services.
+No Azure SDK, credential, deployment template, cloud resource, or Azure
+deployment is present. Azure Functions and Durable Functions remain proposed
+adapters only; business logic must stay in deterministic local services.
 
 ## Migration Principle
 
@@ -23,7 +25,7 @@ The local service should remain testable without cloud infrastructure.
 |---|---|
 | `services/ingestion_service.py` | Azure Function activity |
 | `services/source_scoring_service.py` | Azure Function activity |
-| `services/statement_extraction_service.py` | Azure Function activity |
+| `services/financial_normalization_service.py` | Azure Function activity; document extraction remains future work |
 | `services/materiality_service.py` | Azure Function activity |
 | `services/risk_assessment_service.py` | Azure Function activity |
 | `services/audit_response_service.py` | Azure Function activity |
@@ -44,7 +46,7 @@ HTTP or queue trigger
 -> Durable Functions orchestrator
 -> ingestion activity
 -> source scoring activity
--> statement extraction activity
+-> financial normalization activity, with document extraction deferred
 -> materiality activity
 -> risk assessment activity
 -> audit response activity
