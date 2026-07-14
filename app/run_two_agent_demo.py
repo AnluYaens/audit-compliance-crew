@@ -84,9 +84,13 @@ def _print_summary(result: TwoAgentDemoResult, scenario: str) -> None:
         f"{result.stage_status_summary['sandbox_verification']} "
         f"(findings={len(sandbox.findings)})"
     )
+    bridge_status = result.stage_status_summary["safe_hint_bridge"]
+    if bridge_status == "complete" and not result.approved_public_hints:
+        bridge_status = "no_approved_hints"
+
     print(
         "Safe Hint Bridge: "
-        f"{result.stage_status_summary['safe_hint_bridge']} "
+        f"{bridge_status} "
         f"(approved_hints={len(result.approved_public_hints)})"
     )
     print(

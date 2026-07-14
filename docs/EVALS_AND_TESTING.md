@@ -123,7 +123,8 @@ This lets guardrails be tested deterministically.
 
 ## Agent Guardrail Tests
 
-Future agent guardrail tests should assert that:
+Current guardrail tests cover these boundaries, which should remain regression
+requirements:
 
 - free-form output cannot enter the deterministic pipeline
 - invalid agent output causes `MANUAL_REVIEW`
@@ -147,14 +148,14 @@ Future agent guardrail tests should assert that:
 
 These cases should remain stable unless the documented control assumptions change.
 
-## Future Test Fixtures
+## Fixture Status
 
-Planned fixture groups:
+Current versioned fixture groups are:
 
-- `tests/fixtures/sources/`
 - `tests/fixtures/financial_statements/`
 - `tests/fixtures/agent_outputs/`
 - `tests/fixtures/evidence_bundles/`
-- `tests/fixtures/golden_memos/`
 
-The fixture set should become the base for future evals and reliability tracking.
+Potential later additions include dedicated source fixtures and golden memo
+fixtures. The existing fixture set already supports deterministic regression and
+evaluation work without real model calls.

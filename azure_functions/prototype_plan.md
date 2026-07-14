@@ -1,6 +1,6 @@
 # Minimal Azure Prototype Plan
 
-Phase 11.1 is planning only. This file describes the smallest useful Azure
+This document is planning only. It describes the smallest useful future Azure
 prototype shape without adding Azure SDKs, credentials, deployment templates,
 cloud resources, infrastructure files, or Azure implementation code.
 
@@ -227,7 +227,7 @@ Resolve these before any Azure implementation phase:
   that source scoring can produce `REJECT`?
 - What audit report should show the path from request payload to final decision?
 
-## Explicit Non-Goals For This Phase
+## Explicit Non-Goals for a Future Prototype
 
 Do not:
 
@@ -242,5 +242,5 @@ Do not:
   deterministic decision logic
 - move business logic into `azure_functions/`
 
-This phase ends with a documented, reviewable prototype plan. Implementation
-requires a separate explicit approval phase.
+This plan does not authorize implementation. Any Azure implementation requires
+a separate explicit approval.
